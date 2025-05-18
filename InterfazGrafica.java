@@ -5,47 +5,36 @@ import java.io.File;
 import java.util.stream.*;
 
 public class InterfazGrafica {
-    private static boolean juegoIniciado = false;
     static Clip sonidoFondo;
+    private static JFrame ventanaPrincipal;
+
 
     public static void main(String[] args) {
+        ventanaPrincipal = new JFrame("Golden Dynasty");
+        ventanaPrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        ventanaPrincipal.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        ventanaPrincipal.setResizable(false);
+        ventanaPrincipal.setUndecorated(true);
         intro();
     }
 
     public static void intro() {
-        JFrame ventana = new JFrame();
-        ventana.setUndecorated(true);
-        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ventana.setExtendedState(JFrame.MAXIMIZED_BOTH);
-
         ImageIcon gifIcon = new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\intro.gif");
-
         JLabel gifLabel = new JLabel(gifIcon);
-        ventana.setContentPane(gifLabel);
-
-        ventana.setLocationRelativeTo(null);
-        ventana.setVisible(true);
+        ventanaPrincipal.setContentPane(gifLabel);
+        ventanaPrincipal.setVisible(true);
         reproducirSonidoFondo("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Intro.wav");
         new Timer(6000, e -> {
             ((Timer) e.getSource()).stop();
             detenerSonidoFondo();
-            ventana.dispose();
-            new Thread(() -> menuInicial()).start();
+            menuInicial();
         }).start();
-
     }
-    public static void menuInicial() {
-        JFrame ventana = new JFrame("Golden Dynasty");
-        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ventana.setLocationRelativeTo(null);
-        ventana.setLayout(new BorderLayout());
-        ventana.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        ventana.setResizable(false);
-        ventana.setUndecorated(true);
 
+    public static void menuInicial() {
         JLabel fondo = new JLabel(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\PantallaInicial.png"));
         fondo.setLayout(new GridBagLayout());
-        ventana.setContentPane(fondo);
+
 
         JPanel panelBotones = new JPanel();
         panelBotones.setOpaque(false);
@@ -70,15 +59,13 @@ public class InterfazGrafica {
         GridBagConstraints posicionBotones = new GridBagConstraints();
         posicionBotones.insets = new Insets(350, 0, 0, 0);
         fondo.add(panelBotones, posicionBotones);
-        ventana.setVisible(true);
+        ventanaPrincipal.setVisible(true);
 
        reproducirSonidoFondo("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Soundtrack.wav");
 
         botonJugar.addActionListener(e -> {
-            detenerSonidoFondo();
             reproducirSonidoClick();
-            juegoIniciado = true;
-            ventana.dispose();
+            mostrarJuegos();
         });
 
         botonCreditos.addActionListener(e -> {
@@ -90,7 +77,7 @@ public class InterfazGrafica {
             detenerSonidoFondo();
             reproducirSonidoClick();
             int respuesta = JOptionPane.showConfirmDialog(
-                    ventana,
+                    ventanaPrincipal,
                     "¿Estás seguro que quieres salir del juego?",
                     "Confirmar salida",
                     JOptionPane.YES_NO_OPTION,
@@ -103,15 +90,11 @@ public class InterfazGrafica {
                 reproducirSonidoFondo("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Soundtrack.wav");
             }
         });
-        ventana.pack();
-        while (!juegoIniciado) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }
+        ventanaPrincipal.setContentPane(fondo);
+        ventanaPrincipal.revalidate();
+        ventanaPrincipal.repaint();
     }
+
     public static void mostrarCreditos() {
         JPanel panelCreditos = new JPanel(new BorderLayout(10, 10));
         panelCreditos.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -126,7 +109,7 @@ public class InterfazGrafica {
                 "Desarrollado por:\n" +
                         "• Diego Erik Alfonso Montoya (1198520)\n" +
                         "• Angel Gabriel Manjarrez Moreno (1197503)\n\n" +
-                        "Versión: 10/05/2025\n" +
+                        "Versión: 20/05/2025\n" +
                         "© Todos los derechos reservados"
         );
         contenido.setFont(new Font("Noto Sans", Font.PLAIN, 30));
@@ -158,11 +141,74 @@ public class InterfazGrafica {
         creditos.setUndecorated(true);
         creditos.setTitle("Créditos");
         creditos.setModal(true);
-        creditos.setResizable(true);
         creditos.setContentPane(panelCreditos);
         creditos.pack();
         creditos.setLocationRelativeTo(null);
         creditos.setVisible(true);
+    }
+
+    public static void mostrarJuegos() {
+        JLabel fondo = new JLabel(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\ElegirModo.png"));
+        fondo.setLayout(new GridBagLayout());
+
+        JPanel panelBotones = new JPanel();
+        panelBotones.setOpaque(false);
+        panelBotones.setLayout(new GridLayout(1, 2, 550, 0));
+
+        JPanel panelBotonSolo = new JPanel();
+        panelBotonSolo.setLayout(new GridBagLayout());
+
+        JButton botonTexas = new JButton("");
+        JButton botonFiveDraw = new JButton("");
+        JButton botonSalir = new JButton("↩ Regresar");
+
+        botonSalir.setFont(new Font("Noto Sans", Font.BOLD, 40));
+        botonSalir.setBackground(new Color(243, 216, 140));
+        botonSalir.setFocusPainted(false);
+        botonSalir.setBorderPainted(false);
+        panelBotonSolo.add(botonSalir);
+
+        botonTexas.setIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\TexasModo.gif"));
+        botonFiveDraw.setIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\FiveModo.gif"));
+
+        Stream.of(botonTexas, botonFiveDraw).forEach(boton -> {
+            boton.setFocusPainted(false);
+            boton.setBorderPainted(false);
+            boton.setContentAreaFilled(false);
+            panelBotones.add(boton);
+        });
+
+        GridBagConstraints posicionBotones = new GridBagConstraints();
+        posicionBotones.gridx = 0;
+        posicionBotones.gridy = 0;
+        posicionBotones.anchor = GridBagConstraints.CENTER;
+        posicionBotones.insets = new Insets(210, 65, 45, 65);
+        fondo.add(panelBotones, posicionBotones);
+
+        GridBagConstraints posicionBotonAtras = new GridBagConstraints();
+        posicionBotonAtras.gridx = 0;
+        posicionBotonAtras.gridy = 1;
+        posicionBotonAtras.anchor = GridBagConstraints.SOUTH;
+        posicionBotonAtras.insets = new Insets(0, 0, 150, 0);
+        fondo.add(panelBotonSolo, posicionBotonAtras);
+
+        botonTexas.addActionListener(e -> {
+            reproducirSonidoClick();
+        });
+
+        botonFiveDraw.addActionListener(e -> {
+            reproducirSonidoClick();
+        });
+
+        botonSalir.addActionListener(e -> {
+            detenerSonidoFondo();
+            reproducirSonidoClick();
+            menuInicial();
+        });
+        ventanaPrincipal.setContentPane(fondo);
+        ventanaPrincipal.revalidate();
+        ventanaPrincipal.repaint();
+        ventanaPrincipal.setVisible(true);
     }
 
 
