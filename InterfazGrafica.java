@@ -118,7 +118,7 @@ public class InterfazGrafica {
         panelCreditos.setBackground(new Color(41, 41, 41));
 
         JLabel titulo = new JLabel("Créditos", SwingConstants.CENTER);
-        titulo.setFont(new Font("Noto Sans", Font.BOLD, 24));
+        titulo.setFont(new Font("Noto Sans", Font.BOLD, 45));
         titulo.setForeground(new Color(243, 216, 140));
         panelCreditos.add(titulo, BorderLayout.NORTH);
 
@@ -129,14 +129,14 @@ public class InterfazGrafica {
                         "Versión: 10/05/2025\n" +
                         "© Todos los derechos reservados"
         );
-        contenido.setFont(new Font("Noto Sans", Font.PLAIN, 14));
+        contenido.setFont(new Font("Noto Sans", Font.PLAIN, 30));
         contenido.setEditable(false);
         contenido.setBackground(new Color(243, 216, 140));
-        contenido.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        contenido.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         panelCreditos.add(new JScrollPane(contenido), BorderLayout.CENTER);
 
-        Font fuenteBotones = new Font("Noto Sans", Font.BOLD, 14);
+        Font fuenteBotones = new Font("Noto Sans", Font.BOLD, 30);
         Color colorBoton = new Color(243, 216, 140);
 
         JButton cerrar = new JButton("Cerrar");
