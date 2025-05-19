@@ -9,23 +9,11 @@ public class Mazo {
     }
 
     public void crearMazo() {
-        String[] figuras = {"♥", "♣", "♦", "♠"};
-        for (int i = 0; i < figuras.length; i++) {
-            for (int j = 1; j < 14; j++) {
-                String color;
-                switch (figuras[i]) {
-                    case "♥":
-                    case "♦":
-                        color = "rojo";
-                        break;
-                    case "♣":
-                    case "♠":
-                        color = "negro";
-                        break;
-                    default:
-                        color = "";
-                }
-                Carta carta = new Carta(j, figuras[i], color);
+        String[] figuras = {"♥", "♦", "♣", "♠"};
+        for (String figura : figuras) {
+            for (int i = 1; i <= 13; i++) {
+                String color = (figura.equals("♥") || figura.equals("♦")) ? "rojo" : "negro";
+                Carta carta = new Carta(i, figura, color);
                 cartas.add(carta);
             }
         }
@@ -46,7 +34,7 @@ public class Mazo {
 
     public Carta tomarCarta() {
         if (!cartas.isEmpty()) {
-            return cartas.remove(0);
+            return cartas.removeFirst();
         } else {
             return null;
         }
