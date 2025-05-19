@@ -2,6 +2,8 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.*;
 
 public class InterfazGrafica {
@@ -147,6 +149,8 @@ public class InterfazGrafica {
     }
 
     public static void mostrarJuegos() {
+        AtomicInteger juegoSeleccionado = new AtomicInteger(0);
+
         JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "ElegirModo.png"));
         fondo.setLayout(new GridBagLayout());
 
@@ -192,13 +196,15 @@ public class InterfazGrafica {
         fondo.add(panelBotonSolo, posicionBotonAtras);
 
         botonTexas.addActionListener(e -> {
+            juegoSeleccionado.set(1);
             reproducirSonidoClick();
-            tableroTexas();
+            solicitarJugadores(juegoSeleccionado);
         });
 
         botonFiveDraw.addActionListener(e -> {
+            juegoSeleccionado.set(2);
             reproducirSonidoClick();
-            tableroFiveDraw();
+            solicitarJugadores(juegoSeleccionado);
         });
 
         botonRegresar.addActionListener(e -> {
@@ -212,9 +218,205 @@ public class InterfazGrafica {
         ventanaPrincipal.setVisible(true);
     }
 
+    public static int solicitarJugadores(AtomicInteger juegoSeleccionado) {
+        AtomicInteger cantidadDeJugadores = new AtomicInteger(2);
+
+        JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "CantidadDeJugadores.png"));
+
+        JTextArea numeroDeJugadores = new JTextArea(cantidadDeJugadores + " Jugadores");
+        numeroDeJugadores.setFont(new Font("Noto Sans", Font.BOLD, 80));
+        numeroDeJugadores.setForeground(new Color(243, 216, 140));
+        numeroDeJugadores.setOpaque(false);
+        numeroDeJugadores.setLineWrap(true);
+        numeroDeJugadores.setWrapStyleWord(true);
+        numeroDeJugadores.setAlignmentX(Component.CENTER_ALIGNMENT);
+        numeroDeJugadores.setBounds(725, 625, 475, 100);
+        fondo.add(numeroDeJugadores);
+
+        JButton botonAumentarJugadores = new JButton(">");
+        JButton botonDisminuirJugadores = new JButton("<");
+
+        Stream.of(botonAumentarJugadores, botonDisminuirJugadores).forEach(boton -> {
+            boton.setFont(new Font("Noto Sans", Font.BOLD, 100));
+            boton.setBackground(new Color(243, 216, 140));
+            boton.setFocusPainted(false);
+            boton.setBorderPainted(false);
+            fondo.add(boton);
+        });
+        botonDisminuirJugadores.setBounds(600, 625, 100, 100);
+        botonAumentarJugadores.setBounds(1225, 625, 100, 100);
+
+        botonDisminuirJugadores.addActionListener(e -> {
+            reproducirSonidoClick();
+            if(cantidadDeJugadores.get() > 2) {
+                cantidadDeJugadores.set(cantidadDeJugadores.get() - 1);
+                numeroDeJugadores.setText(cantidadDeJugadores + " Jugadores");
+            } else {
+                JOptionPane.showMessageDialog(ventanaPrincipal, "Debe tener al menos 2 jugadores", "Error", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        botonAumentarJugadores.addActionListener(e -> {
+            reproducirSonidoClick();
+            if (juegoSeleccionado.get() == 1) {
+                if (cantidadDeJugadores.get() < 10) {
+                    cantidadDeJugadores.set(cantidadDeJugadores.get() + 1);
+                    numeroDeJugadores.setText(cantidadDeJugadores + " Jugadores");
+                } else {
+                    JOptionPane.showMessageDialog(ventanaPrincipal, "Solo puedes tener maximo 10 jugadores", "Error", JOptionPane.WARNING_MESSAGE);
+                }
+            } else {
+                if (cantidadDeJugadores.get() < 7) {
+                    cantidadDeJugadores.set(cantidadDeJugadores.get() + 1);
+                    numeroDeJugadores.setText(cantidadDeJugadores + " Jugadores");
+                } else {
+                    JOptionPane.showMessageDialog(ventanaPrincipal, "Solo puedes tener maximo 7 jugadores", "Error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        JButton botonAceptar = new JButton("Aceptar");
+        botonAceptar.setFont(new Font("Noto Sans", Font.BOLD, 60));
+        botonAceptar.setBackground(new Color(243, 216, 140));
+        botonAceptar.setFocusPainted(false);
+        botonAceptar.setBorderPainted(false);
+        botonAceptar.setBounds(800, 775, 300, 100);
+        fondo.add(botonAceptar);
+
+        botonAceptar.addActionListener(e -> {
+            reproducirSonidoClick();
+            for (int i = 0; i < cantidadDeJugadores.get(); i++) {
+                solicitarNombreDeJugador(i + 1);
+            }
+            escogerDineroInicial();
+            if (juegoSeleccionado.get() == 1) {
+                tableroTexas();
+            } else {
+                tableroFiveDraw();
+            }
+        });
+
+        ventanaPrincipal.setContentPane(fondo);
+        ventanaPrincipal.revalidate();
+        ventanaPrincipal.repaint();
+        ventanaPrincipal.setVisible(true);
+        return cantidadDeJugadores.get();
+    }
+
+    public static String solicitarNombreDeJugador(int numDeJugador) {
+        JDialog nombreJugador = new JDialog();
+        nombreJugador.setUndecorated(true);
+        nombreJugador.setSize(1000, 350);
+        nombreJugador.setLocationRelativeTo(null);
+        nombreJugador.setModal(true);
+        nombreJugador.setResizable(false);
+
+        JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
+        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
+        JLabel titulo = new JLabel("Ingrese el nombre del jugador " + numDeJugador + "\uD83D\uDC64", SwingConstants.CENTER);
+        titulo.setFont(new Font("Noto Sans", Font.BOLD, 50));
+        titulo.setForeground(new Color(243, 216, 140));
+        panelPrincipal.add(titulo, BorderLayout.NORTH);
+
+        JTextField campoNombre = new JTextField();
+        campoNombre.setFont(new Font("Noto Sans", Font.PLAIN, 50));
+        campoNombre.setBackground(new Color(243, 216, 140));
+        campoNombre.setHorizontalAlignment(JTextField.CENTER);
+        panelPrincipal.add(campoNombre, BorderLayout.CENTER);
+
+        JPanel panelBoton = new JPanel();
+        panelBoton.setBackground(new Color(41, 41, 41));
+        JButton botonAceptar = new JButton("Aceptar");
+
+        botonAceptar.setFont(new Font("Noto Sans", Font.BOLD, 32));
+        botonAceptar.setBackground(new Color(243, 216, 140));
+        botonAceptar.setFocusPainted(false);
+
+        AtomicReference<String> nombre = new AtomicReference<>("");
+
+        botonAceptar.addActionListener(e -> {
+            reproducirSonidoClick();
+            if (!campoNombre.getText().trim().isEmpty()) {
+                nombre.set(campoNombre.getText().trim());
+                nombreJugador.dispose();
+            } else {
+                JOptionPane.showMessageDialog(nombreJugador, "Debe ingresar un nombre válido", "Error", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        campoNombre.addActionListener(e -> botonAceptar.doClick());
+
+        panelBoton.add(botonAceptar);
+        panelPrincipal.add(panelBoton, BorderLayout.SOUTH);
+        panelPrincipal.setBackground(new Color(41, 41, 41));
+        nombreJugador.add(panelPrincipal);
+        nombreJugador.setVisible(true);
+
+        return nombre.get();
+    }
+
+    public static int escogerDineroInicial() {
+        AtomicInteger DineroInicial = new AtomicInteger();
+
+        JDialog ventanaDinero = new JDialog();
+        ventanaDinero.setSize(1200, 300);
+        ventanaDinero.setLocationRelativeTo(null);
+        ventanaDinero.setUndecorated(true);
+        ventanaDinero.setModal(true);
+        ventanaDinero.setResizable(false);
+
+        JPanel panelPrincipal = new JPanel(new BorderLayout(10, 10));
+        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+        panelPrincipal.setBackground(new Color(41, 41, 41));
+
+        JLabel titulo = new JLabel("\uD83D\uDCB5 Seleccione la cantidad de dinero inicial \uD83D\uDCB8", SwingConstants.CENTER);
+        titulo.setFont(new Font("Noto Sans", Font.BOLD, 50));
+        titulo.setForeground(new Color(243, 216, 140));
+        panelPrincipal.add(titulo, BorderLayout.NORTH);
+
+        JPanel panelBotones = new JPanel(new GridLayout(1, 3, 15, 15));
+        panelBotones.setBackground(new Color(41, 41, 41));
+
+        JButton boton1 = new JButton(" 1000 ");
+        JButton boton2 = new JButton(" 3000 ");
+        JButton boton3 = new JButton(" 5000 ");
+
+        Stream.of(boton1, boton2, boton3).forEach(boton -> {
+            boton.setFont(new Font("Noto Sans", Font.BOLD, 50));
+            boton.setBackground(new Color(243, 216, 140));
+            boton.setFocusPainted(false);
+        });
+
+        boton1.addActionListener(e -> {
+            DineroInicial.set(1000);
+            ventanaDinero.dispose();
+        });
+
+        boton2.addActionListener(e -> {
+            DineroInicial.set(3000);
+            ventanaDinero.dispose();
+        });
+
+        boton3.addActionListener(e -> {
+            DineroInicial.set(5000);
+            ventanaDinero.dispose();
+        });
+
+        panelBotones.add(boton1);
+        panelBotones.add(boton2);
+        panelBotones.add(boton3);
+
+        panelPrincipal.add(panelBotones, BorderLayout.CENTER);
+        ventanaDinero.add(panelPrincipal);
+        ventanaDinero.setVisible(true);
+        return DineroInicial.get();
+    }
+
     public static void tableroTexas() {
         JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "TableroTexas.png"));
-        ventanaPrincipal.setLayout(null);
+
+        tableroGeneral(fondo);
 
         ventanaPrincipal.setContentPane(fondo);
         ventanaPrincipal.revalidate();
@@ -224,8 +426,17 @@ public class InterfazGrafica {
 
     public static void tableroFiveDraw() {
         JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "TableroFiveCard.png"));
-        fondo.setBounds(0, 0, 1920, 1080);
 
+        tableroGeneral(fondo);
+
+        ventanaPrincipal.setContentPane(fondo);
+        ventanaPrincipal.revalidate();
+        ventanaPrincipal.repaint();
+        ventanaPrincipal.setVisible(true);
+    }
+
+
+    public static void tableroGeneral(JLabel fondo) {
         JButton[] botonesFicha = new JButton[6];
         int delta = 175;
         for (int i = 0; i < 6; i++) {
@@ -244,17 +455,9 @@ public class InterfazGrafica {
             fondo.add(botonesFicha[i]);
         }
 
-        JButton botonAllIn = new JButton("");
-        botonAllIn.setIcon(new ImageIcon(RUTA_ARCHIVOS_FICHAS + "FichaAllIn.png"));
-        botonAllIn.setContentAreaFilled(false);
-        botonAllIn.setFocusPainted(false);
-        botonAllIn.setBorderPainted(false);
-        botonAllIn.setBounds(1525, 575, 250, 100);
-        fondo.add(botonAllIn);
-
-        JButton botonInformacion = new JButton(" Informacion");
-        JButton botonCombinaciones = new JButton(" Combinaciones");
-        JButton botonConfiguraciones = new JButton(" Configuraciones");
+        JButton botonInformacion = new JButton("ℹ Informacion");
+        JButton botonCombinaciones = new JButton("\uD83C\uDCCF Combinaciones");
+        JButton botonConfiguraciones = new JButton("⚙ Opciones");
 
         Stream.of(botonInformacion, botonCombinaciones,botonConfiguraciones).forEach(boton -> {
             boton.setFont(new Font("Noto Sans", Font.BOLD, 40));
@@ -264,14 +467,231 @@ public class InterfazGrafica {
             fondo.add(boton);
         });
 
+        botonCombinaciones.setFont(new Font("Noto Sans", Font.BOLD, 35));
 
+        botonInformacion.setBounds(1575, 200, 325, 75);
+        botonCombinaciones.setBounds(1575, 400, 325, 75);
+        botonConfiguraciones.setBounds(100, 200, 300, 75);
 
+        JButton botonAllIn = new JButton("");
+        botonAllIn.setIcon(new ImageIcon(RUTA_ARCHIVOS_FICHAS + "FichaAllIn.png"));
+        botonAllIn.setContentAreaFilled(false);
+        botonAllIn.setFocusPainted(false);
+        botonAllIn.setBorderPainted(false);
+        botonAllIn.setBounds(1525, 575, 250, 100);
+        fondo.add(botonAllIn);
 
-        ventanaPrincipal.setContentPane(fondo);
-        ventanaPrincipal.revalidate();
-        ventanaPrincipal.repaint();
-        ventanaPrincipal.setVisible(true);
+        botonInformacion.addActionListener(e -> {
+            reproducirSonidoClick();
+            mostrarInformacion(0);
+        });
+
+        botonCombinaciones.addActionListener(e -> {
+            reproducirSonidoClick();
+            mostrarCombinaciones();
+        });
+
+        botonConfiguraciones.addActionListener(e -> {
+            reproducirSonidoClick();
+            mostrarMenuOpciones();
+        });
     }
+    public static void mostrarInformacion(int juegoSeleccionado) {
+        JDialog informacionVentana = new JDialog();
+        informacionVentana.setSize(800, 500);
+        informacionVentana.setLocationRelativeTo(null);
+        informacionVentana.setUndecorated(true);
+        informacionVentana.setModal(true);
+        informacionVentana.setLayout(new BorderLayout(10, 10));
+        informacionVentana.getContentPane().setBackground(new Color(41, 41, 41));
+
+        String mensaje = juegoSeleccionado == 1 ?
+                "• Texas Hold'em se juega entre 2 y 10 jugadores.\n" +
+                        "• Cada jugador recibe 2 cartas privadas y se revelan 5 cartas comunitarias.\n" +
+                        "• Objetivo: formar la mejor mano de 5 cartas combinando tus cartas con las comunitarias.\n" +
+                        "• 4 rondas de apuestas: Pre-Flop, Flop, Turn y River.\n" +
+                        "• Acciones: pasar, apostar, igualar, subir o retirarte.\n" +
+                        "• Al final (Showdown), se comparan manos y el mejor gana el bote.\n" :
+                "• 5 Card Draw se juega entre 2 y 7 jugadores.\n" +
+                        "• Cada jugador recibe 5 cartas privadas.\n" +
+                        "• Primera ronda de apuestas, luego cambio de cartas (0-5).\n" +
+                        "• Segunda ronda de apuestas.\n" +
+                        "• Showdown: jugadores revelan cartas.\n" +
+                        "• Gana quien tenga la mejor mano de póquer de 5 cartas.\n";
+
+        JTextArea areaMensaje = new JTextArea(mensaje);
+        areaMensaje.setFont(new Font("Noto Sans", Font.PLAIN, 32));
+        areaMensaje.setForeground(new Color(243, 216, 140));
+        areaMensaje.setBackground(new Color(41, 41, 41));
+        areaMensaje.setEditable(false);
+        areaMensaje.setLineWrap(true);
+        areaMensaje.setWrapStyleWord(true);
+        areaMensaje.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JButton botonCerrar = new JButton("Cerrar");
+        botonCerrar.setFont(new Font("Noto Sans", Font.BOLD, 32));
+        botonCerrar.setBackground(new Color(243, 216, 140));
+        botonCerrar.setFocusPainted(false);
+        botonCerrar.setBorderPainted(false);
+        botonCerrar.addActionListener(e -> {
+            reproducirSonidoClick();
+            informacionVentana.dispose();
+        });
+
+        JPanel panelBoton = new JPanel();
+        panelBoton.setBackground(new Color(41, 41, 41));
+        panelBoton.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        panelBoton.add(botonCerrar);
+        informacionVentana.add(areaMensaje, BorderLayout.CENTER);
+        informacionVentana.add(panelBoton, BorderLayout.SOUTH);
+        informacionVentana.setVisible(true);
+    }
+    public static void mostrarCombinaciones() {
+        JDialog combinaciones = new JDialog();
+        combinaciones.setSize(1200, 420);
+        combinaciones.setLocation(360,0);
+        combinaciones.setUndecorated(true);
+        combinaciones.setModal(true);
+        combinaciones.setLayout(new BorderLayout());
+        combinaciones.getContentPane().setBackground(new Color(41, 41, 41));
+
+        JLabel imagen = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "Combinaciones.png"));
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        imagePanel.add(imagen, BorderLayout.NORTH);
+        imagePanel.setBackground(new Color(41, 41, 41));
+
+        JScrollPane barraScroll = new JScrollPane(imagePanel);
+        barraScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        barraScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        barraScroll.getVerticalScrollBar().setUnitIncrement(16);
+        barraScroll.setBorder(BorderFactory.createEmptyBorder());
+        barraScroll.getViewport().setBackground(new Color(41, 41, 41));
+
+        JButton botonCerrar = new JButton("Cerrar");
+        botonCerrar.setFont(new Font("Noto Sans", Font.BOLD, 30));
+        botonCerrar.setBackground(new Color(243, 216, 140));
+        botonCerrar.setFocusPainted(false);
+        botonCerrar.setBorderPainted(false);
+
+        botonCerrar.addActionListener(e -> {
+            reproducirSonidoClick();
+            combinaciones.dispose();
+        });
+
+        JPanel panelDeBoton = new JPanel();
+        panelDeBoton.setBackground(new Color(41, 41, 41));
+        panelDeBoton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panelDeBoton.add(botonCerrar);
+
+        combinaciones.add(barraScroll, BorderLayout.CENTER);
+        combinaciones.add(panelDeBoton, BorderLayout.SOUTH);
+        combinaciones.setVisible(true);
+    }
+    public static void mostrarMenuOpciones() {
+        JDialog menuOpciones = new JDialog();
+        menuOpciones.setSize(600, 500);
+        menuOpciones.setLocationRelativeTo(null);
+        menuOpciones.setUndecorated(true);
+        menuOpciones.setModal(true);
+        menuOpciones.setLayout(new BorderLayout(10, 10));
+        menuOpciones.getContentPane().setBackground(new Color(41, 41, 41));
+
+        JPanel panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
+        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        panelPrincipal.setBackground(new Color(41, 41, 41));
+
+        JLabel titulo = new JLabel("⚙ Opciones", SwingConstants.CENTER);
+        titulo.setFont(new Font("Noto Sans", Font.BOLD, 50));
+        titulo.setForeground(new Color(243, 216, 140));
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        panelPrincipal.add(titulo);
+        panelPrincipal.add(Box.createRigidArea(new Dimension(0, 40)));
+
+        JToggleButton botonMusica = new JToggleButton("", SONIDO_FONDO != null && SONIDO_FONDO.isActive());
+        botonMusica.setFocusPainted(false);
+
+        if (botonMusica.isSelected()) {
+            botonMusica.setText("🔊 Música: ACTIVADA");
+        } else {
+            botonMusica.setText("🔇 Música: DESACTIVADA");
+        }
+
+        botonMusica.addActionListener(e -> {
+            reproducirSonidoClick();
+            if (botonMusica.isSelected()) {
+                botonMusica.setText("🔊 Música: ACTIVADA");
+                reproducirSonidoFondo(RUTA_ARCHIVOS_VISUALES + "Soundtrack.wav");
+            } else {
+                botonMusica.setText("🔇 Música: DESACTIVADA");
+                detenerSonidoFondo();
+            }
+        });
+
+        panelPrincipal.add(botonMusica);
+        panelPrincipal.add(Box.createRigidArea(new Dimension(0, 30)));
+
+        JButton botonAbandonar = new JButton("♠ Abandonar Mesa");
+        botonAbandonar.addActionListener(e -> {
+            reproducirSonidoClick();
+            int respuesta = JOptionPane.showConfirmDialog(
+                    menuOpciones,
+                    "¿Estás seguro que quieres abandonar la mesa?",
+                    "Confirmar abandono",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    new ImageIcon(RUTA_ARCHIVOS_VISUALES + "Warning.png")
+            );
+            if (respuesta == JOptionPane.YES_OPTION) {
+                menuOpciones.dispose();
+            }
+        });
+        panelPrincipal.add(botonAbandonar);
+        panelPrincipal.add(Box.createRigidArea(new Dimension(0, 30)));
+
+        JButton botonSalir = new JButton("🚪 Salir del Juego");
+        botonSalir.addActionListener(e -> {
+            reproducirSonidoClick();
+            int respuesta = JOptionPane.showConfirmDialog(
+                    menuOpciones,
+                    "¿Estás seguro que quieres salir del juego?",
+                    "Confirmar salida",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    new ImageIcon(RUTA_ARCHIVOS_VISUALES + "Warning.png")
+            );
+            if (respuesta == JOptionPane.YES_OPTION) {
+                detenerSonidoFondo();
+                menuOpciones.dispose();
+                menuInicial();
+            }
+        });
+        panelPrincipal.add(botonSalir);
+        panelPrincipal.add(Box.createRigidArea(new Dimension(0, 50)));
+
+        JButton botonCerrar = new JButton("Cerrar");
+        botonCerrar.setFont(new Font("Noto Sans", Font.BOLD, 30));
+
+        Stream.of(botonCerrar, botonSalir, botonAbandonar, botonMusica).forEach(boton -> {
+            boton.setFont(new Font("Noto Sans", Font.BOLD, 40));
+            boton.setBackground(new Color(243, 216, 140));
+            boton.setFocusPainted(false);
+            boton.setBorderPainted(false);
+            boton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            boton.setPreferredSize(new Dimension(400, 80));
+        });
+
+        botonCerrar.addActionListener(e -> {
+            reproducirSonidoClick();
+            menuOpciones.dispose();
+        });
+        panelPrincipal.add(botonCerrar);
+
+        menuOpciones.add(panelPrincipal, BorderLayout.CENTER);
+        menuOpciones.setVisible(true);
+    }
+
 
     public static void detenerSonidoFondo() {
         SONIDO_FONDO.stop();
