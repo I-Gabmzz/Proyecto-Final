@@ -1,11 +1,14 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
+
 public class Mazo {
     private ArrayList<Carta> cartas;
 
     public Mazo() {
         cartas = new ArrayList<>();
+        crearMazo();
+        revolverMazo();
     }
 
     public void crearMazo() {
@@ -26,7 +29,7 @@ public class Mazo {
     public ArrayList<Carta> tomarCartas(int cantidadCartas) {
         ArrayList<Carta> cartasTomadas = new ArrayList<>();
         for(int i = 0; i < cantidadCartas; i++) {
-            Carta carta = cartas.get(i);
+            Carta carta = tomarCarta();
             cartasTomadas.add(carta);
         }
         return cartasTomadas;
