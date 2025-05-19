@@ -6,7 +6,12 @@ import java.util.stream.*;
 
 public class InterfazGrafica {
     private static JFrame ventanaPrincipal;
-    static Clip sonidoFondo;
+
+    static Clip SONIDO_FONDO;
+    static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\";
+    static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
+    // static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\";
+    // static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
 
     public static void main(String[] args) {
         ventanaPrincipal = new JFrame("Golden Dynasty");
@@ -18,11 +23,11 @@ public class InterfazGrafica {
     }
 
     public static void intro() {
-        ImageIcon gifIcon = new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\intro.gif");
+        ImageIcon gifIcon = new ImageIcon(RUTA_ARCHIVOS_VISUALES + "intro.gif");
         JLabel gifLabel = new JLabel(gifIcon);
         ventanaPrincipal.setContentPane(gifLabel);
         ventanaPrincipal.setVisible(true);
-        reproducirSonidoFondo("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Intro.wav");
+        reproducirSonidoFondo(RUTA_ARCHIVOS_VISUALES + "Intro.wav");
         new Timer(6000, e -> {
             ((Timer) e.getSource()).stop();
             detenerSonidoFondo();
@@ -31,7 +36,7 @@ public class InterfazGrafica {
     }
 
     public static void menuInicial() {
-        JLabel fondo = new JLabel(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\PantallaInicial.png"));
+        JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "PantallaInicial.png"));
         fondo.setLayout(new GridBagLayout());
 
         JPanel panelBotones = new JPanel();
@@ -56,7 +61,7 @@ public class InterfazGrafica {
         fondo.add(panelBotones, posicionBotones);
         ventanaPrincipal.setVisible(true);
 
-       reproducirSonidoFondo("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Soundtrack.wav");
+       reproducirSonidoFondo(RUTA_ARCHIVOS_VISUALES + "Soundtrack.wav");
 
         botonJugar.addActionListener(e -> {
             reproducirSonidoClick();
@@ -82,7 +87,7 @@ public class InterfazGrafica {
             if (respuesta == JOptionPane.YES_OPTION) {
                 System.exit(0);
             } else {
-                reproducirSonidoFondo("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Soundtrack.wav");
+                reproducirSonidoFondo(RUTA_ARCHIVOS_VISUALES + "Soundtrack.wav");
             }
         });
         ventanaPrincipal.setContentPane(fondo);
@@ -142,7 +147,7 @@ public class InterfazGrafica {
     }
 
     public static void mostrarJuegos() {
-        JLabel fondo = new JLabel(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\ElegirModo.png"));
+        JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "ElegirModo.png"));
         fondo.setLayout(new GridBagLayout());
 
         JPanel panelBotones = new JPanel();
@@ -162,8 +167,8 @@ public class InterfazGrafica {
         botonRegresar.setBorderPainted(false);
         panelBotonSolo.add(botonRegresar);
 
-        botonTexas.setIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\TexasModo.gif"));
-        botonFiveDraw.setIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\FiveModo.gif"));
+        botonTexas.setIcon(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "TexasModo.gif"));
+        botonFiveDraw.setIcon(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "FiveModo.gif"));
 
         Stream.of(botonTexas, botonFiveDraw).forEach(boton -> {
             boton.setFocusPainted(false);
@@ -208,7 +213,7 @@ public class InterfazGrafica {
     }
 
     public static void tableroTexas() {
-        JLabel fondo = new JLabel(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\TableroTexas.png"));
+        JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "TableroTexas.png"));
         ventanaPrincipal.setLayout(null);
 
         ventanaPrincipal.setContentPane(fondo);
@@ -218,14 +223,14 @@ public class InterfazGrafica {
     }
 
     public static void tableroFiveDraw() {
-        JLabel fondo = new JLabel(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\TableroFiveCard.png"));
+        JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "TableroFiveCard.png"));
         fondo.setBounds(0, 0, 1920, 1080);
 
         JButton[] botonesFicha = new JButton[6];
         int delta = 175;
         for (int i = 0; i < 6; i++) {
             botonesFicha[i] = new JButton("");
-            botonesFicha[i].setIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\Ficha" + (1+i) + "Atras.png"));
+            botonesFicha[i].setIcon(new ImageIcon(RUTA_ARCHIVOS_FICHAS + "Ficha" + (1+i) + "Atras.png"));
             botonesFicha[i].setContentAreaFilled(false);
             botonesFicha[i].setFocusPainted(false);
             botonesFicha[i].setBorderPainted(false);
@@ -234,13 +239,13 @@ public class InterfazGrafica {
             } else {
                 botonesFicha[i].setBounds(1400 + (i*delta), 700, 150, 150);
             }
-            botonesFicha[i].setRolloverIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\Ficha" + (1+i) + "Cara.png"));
+            botonesFicha[i].setRolloverIcon(new ImageIcon(RUTA_ARCHIVOS_FICHAS + "Ficha" + (1+i) + "Cara.png"));
             botonesFicha[i].setRolloverEnabled(true);
             fondo.add(botonesFicha[i]);
         }
 
         JButton botonAllIn = new JButton("");
-        botonAllIn.setIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\FichaAllIn.png"));
+        botonAllIn.setIcon(new ImageIcon(RUTA_ARCHIVOS_FICHAS + "FichaAllIn.png"));
         botonAllIn.setContentAreaFilled(false);
         botonAllIn.setFocusPainted(false);
         botonAllIn.setBorderPainted(false);
@@ -268,24 +273,23 @@ public class InterfazGrafica {
         ventanaPrincipal.setVisible(true);
     }
 
-
     public static void detenerSonidoFondo() {
-        sonidoFondo.stop();
-        sonidoFondo.close();
+        SONIDO_FONDO.stop();
+        SONIDO_FONDO.close();
     }
     public static void reproducirSonidoFondo(String rutaArchivo) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(rutaArchivo));
-            sonidoFondo = AudioSystem.getClip();
-            sonidoFondo.open(audioInputStream);
-            sonidoFondo.loop(Clip.LOOP_CONTINUOUSLY);
+            SONIDO_FONDO = AudioSystem.getClip();
+            SONIDO_FONDO.open(audioInputStream);
+            SONIDO_FONDO.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     public static void reproducirSonidoClick() {
        try {
-           AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\SonidoBoton.wav"));
+           AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File( RUTA_ARCHIVOS_VISUALES + "SonidoBoton.wav"));
            Clip clip = AudioSystem.getClip();
            clip.open(audioInputStream);
            clip.start();
