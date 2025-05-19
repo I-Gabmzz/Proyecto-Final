@@ -2,12 +2,12 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.stream.*;
 
 public class InterfazGrafica {
-    static Clip sonidoFondo;
     private static JFrame ventanaPrincipal;
-
+    static Clip sonidoFondo;
 
     public static void main(String[] args) {
         ventanaPrincipal = new JFrame("Golden Dynasty");
@@ -35,7 +35,6 @@ public class InterfazGrafica {
         JLabel fondo = new JLabel(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\PantallaInicial.png"));
         fondo.setLayout(new GridBagLayout());
 
-
         JPanel panelBotones = new JPanel();
         panelBotones.setOpaque(false);
         panelBotones.setLayout(new GridLayout(3, 1, 30, 20));
@@ -44,12 +43,9 @@ public class InterfazGrafica {
         JButton botonCreditos = new JButton("👤 Créditos");
         JButton botonSalir = new JButton("🚪 Salir");
 
-        Font fuenteBotones = new Font("Noto Sans", Font.BOLD, 60);
-        Color colorBoton = new Color(243, 216, 140);
-
         Stream.of(botonJugar, botonCreditos, botonSalir).forEach(boton -> {
-            boton.setFont(fuenteBotones);
-            boton.setBackground(colorBoton);
+            boton.setFont(new Font("Noto Sans", Font.BOLD, 40));
+            boton.setBackground(new Color(243, 216, 140));
             boton.setFocusPainted(false);
             boton.setBorderPainted(false);
             boton.setPreferredSize(new Dimension(400, 125));
@@ -96,13 +92,15 @@ public class InterfazGrafica {
     }
 
     public static void mostrarCreditos() {
+        Color colorBoton = new Color(243, 216, 140);
+
         JPanel panelCreditos = new JPanel(new BorderLayout(10, 10));
         panelCreditos.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         panelCreditos.setBackground(new Color(41, 41, 41));
 
         JLabel titulo = new JLabel("Créditos", SwingConstants.CENTER);
         titulo.setFont(new Font("Noto Sans", Font.BOLD, 45));
-        titulo.setForeground(new Color(243, 216, 140));
+        titulo.setForeground(colorBoton);
         panelCreditos.add(titulo, BorderLayout.NORTH);
 
         JTextArea contenido = new JTextArea(
@@ -114,20 +112,17 @@ public class InterfazGrafica {
         );
         contenido.setFont(new Font("Noto Sans", Font.PLAIN, 30));
         contenido.setEditable(false);
-        contenido.setBackground(new Color(243, 216, 140));
+        contenido.setBackground(colorBoton);
         contenido.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         panelCreditos.add(new JScrollPane(contenido), BorderLayout.CENTER);
-
-        Font fuenteBotones = new Font("Noto Sans", Font.BOLD, 30);
-        Color colorBoton = new Color(243, 216, 140);
 
         JButton cerrar = new JButton("Cerrar");
         cerrar.addActionListener(e -> {
             reproducirSonidoClick();
             ((Window) SwingUtilities.getWindowAncestor((Component) e.getSource())).dispose();
         });
-        cerrar.setFont(fuenteBotones);
+        cerrar.setFont(new Font("Noto Sans", Font.BOLD, 30));
         cerrar.setBackground(colorBoton);
         cerrar.setFocusPainted(false);
         cerrar.setBorderPainted(false);
@@ -160,13 +155,13 @@ public class InterfazGrafica {
 
         JButton botonTexas = new JButton("");
         JButton botonFiveDraw = new JButton("");
-        JButton botonSalir = new JButton("↩ Regresar");
+        JButton botonRegresar = new JButton("↩ Regresar");
 
-        botonSalir.setFont(new Font("Noto Sans", Font.BOLD, 40));
-        botonSalir.setBackground(new Color(243, 216, 140));
-        botonSalir.setFocusPainted(false);
-        botonSalir.setBorderPainted(false);
-        panelBotonSolo.add(botonSalir);
+        botonRegresar.setFont(new Font("Noto Sans", Font.BOLD, 40));
+        botonRegresar.setBackground(new Color(243, 216, 140));
+        botonRegresar.setFocusPainted(false);
+        botonRegresar.setBorderPainted(false);
+        panelBotonSolo.add(botonRegresar);
 
         botonTexas.setIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\TexasModo.gif"));
         botonFiveDraw.setIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\FiveModo.gif"));
@@ -194,13 +189,15 @@ public class InterfazGrafica {
 
         botonTexas.addActionListener(e -> {
             reproducirSonidoClick();
+            tableroTexas();
         });
 
         botonFiveDraw.addActionListener(e -> {
             reproducirSonidoClick();
+            tableroFiveDraw();
         });
 
-        botonSalir.addActionListener(e -> {
+        botonRegresar.addActionListener(e -> {
             detenerSonidoFondo();
             reproducirSonidoClick();
             menuInicial();
@@ -211,7 +208,66 @@ public class InterfazGrafica {
         ventanaPrincipal.setVisible(true);
     }
 
+    public static void tableroTexas() {
+        JLabel fondo = new JLabel(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\TableroTexas.png"));
+        ventanaPrincipal.setLayout(null);
 
+        ventanaPrincipal.setContentPane(fondo);
+        ventanaPrincipal.revalidate();
+        ventanaPrincipal.repaint();
+        ventanaPrincipal.setVisible(true);
+    }
+
+    public static void tableroFiveDraw() {
+        JLabel fondo = new JLabel(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\TableroFiveCard.png"));
+        fondo.setBounds(0, 0, 1920, 1080);
+
+        JButton[] botonesFicha = new JButton[6];
+        int delta = 175;
+        for (int i = 0; i < 6; i++) {
+            botonesFicha[i] = new JButton("");
+            botonesFicha[i].setIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\Ficha" + (1+i) + "Atras.png"));
+            botonesFicha[i].setContentAreaFilled(false);
+            botonesFicha[i].setFocusPainted(false);
+            botonesFicha[i].setBorderPainted(false);
+            if (i > 2) {
+                botonesFicha[i].setBounds(1400 + ((i-3)*delta), 900, 150, 150);
+            } else {
+                botonesFicha[i].setBounds(1400 + (i*delta), 700, 150, 150);
+            }
+            botonesFicha[i].setRolloverIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\Ficha" + (1+i) + "Cara.png"));
+            botonesFicha[i].setRolloverEnabled(true);
+            fondo.add(botonesFicha[i]);
+        }
+
+        JButton botonAllIn = new JButton("");
+        botonAllIn.setIcon(new ImageIcon("C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\FichaAllIn.png"));
+        botonAllIn.setContentAreaFilled(false);
+        botonAllIn.setFocusPainted(false);
+        botonAllIn.setBorderPainted(false);
+        botonAllIn.setBounds(1525, 575, 250, 100);
+        fondo.add(botonAllIn);
+
+        JButton botonInformacion = new JButton(" Informacion");
+        JButton botonCombinaciones = new JButton(" Combinaciones");
+        JButton botonConfiguraciones = new JButton(" Configuraciones");
+
+        Stream.of(botonInformacion, botonCombinaciones,botonConfiguraciones).forEach(boton -> {
+            boton.setFont(new Font("Noto Sans", Font.BOLD, 40));
+            boton.setBackground(new Color(243, 216, 140));
+            boton.setFocusPainted(false);
+            boton.setBorderPainted(false);
+            fondo.add(boton);
+        });
+
+
+
+
+        ventanaPrincipal.setContentPane(fondo);
+        ventanaPrincipal.revalidate();
+        ventanaPrincipal.repaint();
+        ventanaPrincipal.setVisible(true);
+    }
 
 
     public static void detenerSonidoFondo() {
