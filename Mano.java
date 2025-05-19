@@ -3,8 +3,8 @@ import java.util.*;
 public class Mano implements Comparable<Mano> {
     private ArrayList<Carta> mano;
 
-    public Mano() {
-        mano = new ArrayList<>();
+    public Mano(ArrayList<Carta> cartas) {
+        this.mano = new ArrayList<>(cartas);
     }
 
     public ArrayList<Carta> getMano(){

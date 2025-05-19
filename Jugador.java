@@ -6,10 +6,10 @@ public class Jugador {
     private boolean yaHizoFold;
     private int apuestaActual;
 
-    public Jugador(String nombre, int dinero ){
+    public Jugador(String nombre, int dinero , Mano mano){
         this.nombre = nombre;
         this.dinero = dinero;
-        this.mano = new Mano();
+        this.mano = mano;
         this.sigueActivo = true;
         this.yaHizoFold = false;
         this.apuestaActual = 0;
