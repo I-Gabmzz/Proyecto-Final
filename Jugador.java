@@ -1,0 +1,41 @@
+public class Jugador {
+    private String nombre;
+    private Mano mano;
+    private int dinero;
+    private boolean sigueActivo;
+    private boolean yaHizoFold;
+    private int apuestaActual;
+
+    public Jugador(String nombre, int dinero ){
+        this.nombre = nombre;
+        this.dinero = dinero;
+        this.mano = new Mano();
+        this.sigueActivo = true;
+        this.yaHizoFold = false;
+        this.apuestaActual = 0;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public Mano getMano() {
+        return mano;
+    }
+
+    public int getDinero() {
+        return dinero;
+    }
+
+    public boolean estaActivo() {
+        return sigueActivo && !yaHizoFold;
+    }
+
+    public boolean haHechoFold() {
+        return yaHizoFold;
+    }
+
+    public int getApuestaActual() {
+        return apuestaActual;
+    }
+}
