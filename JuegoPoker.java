@@ -60,7 +60,7 @@ public abstract class JuegoPoker {
         if(jugador.getDinero() >= cantidadTotal){
             jugador.setDinero(jugador.getDinero() - cantidadTotal);
             jugador.setApuestaActual(cantidadTotal);
-           //Mostrar mensaje con interfaz donde el jugador sube la apuesta
+            //Mostrar mensaje con interfaz donde el jugador sube la apuesta
         } else {
             //Mostrar mensaje con interfaz donde el jugador no puede subir la apuesta por fondos insuficientes
         }
