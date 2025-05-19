@@ -8,6 +8,7 @@ public class FiveCard extends JuegoPoker{
     @Override
     public int determinarGanador(){
 
+        return 0;
     }
     @Override
     public void mostrarMano(){
@@ -20,9 +21,10 @@ public class FiveCard extends JuegoPoker{
     @Override
     public int determinarTurnoInicial(){
 
+        return 0;
     }
     @Override
-    public void iniciarJuego(int numJugadores){
+    public void iniciarJuego(){
 
     }
 }

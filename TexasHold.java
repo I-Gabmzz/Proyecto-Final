@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TexasHold extends JuegoPoker {
     private ArrayList<Carta> cartasComunitarias;
@@ -10,6 +11,15 @@ public class TexasHold extends JuegoPoker {
         cartasComunitarias = new ArrayList<>();
         dineroEnBote = 0;
         apuestaMinima = 10;
+    }
+
+    public static void main(String[] args) {
+        new TexasHold().iniciarJuego();
+    }
+
+    @Override
+    public void iniciarJuego(){
+        InterfazGrafica.intro();
     }
 
     public void repartirFlop() {
@@ -59,6 +69,7 @@ public class TexasHold extends JuegoPoker {
     @Override
     public int determinarGanador(){
 
+        return 0;
     }
     @Override
     public void mostrarMano(){
@@ -110,11 +121,5 @@ public class TexasHold extends JuegoPoker {
     public int determinarTurnoInicial(){
         return 0;
     }
-    @Override
-    public void iniciarJuego(int numJugadores){
-
-    }
-
-
 
 }

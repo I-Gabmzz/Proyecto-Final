@@ -8,6 +8,8 @@ import java.util.stream.*;
 
 public class InterfazGrafica {
     private static JFrame ventanaPrincipal;
+    public static JTextField cantidadEnBote = new JTextField(1);
+
 
     static Clip SONIDO_FONDO;
     static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\";
@@ -15,16 +17,13 @@ public class InterfazGrafica {
     // static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\";
     // static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
 
-    public static void main(String[] args) {
+    public static void intro() {
         ventanaPrincipal = new JFrame("Golden Dynasty");
         ventanaPrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ventanaPrincipal.setExtendedState(JFrame.MAXIMIZED_BOTH);
         ventanaPrincipal.setResizable(false);
         ventanaPrincipal.setUndecorated(true);
-        intro();
-    }
 
-    public static void intro() {
         ImageIcon gifIcon = new ImageIcon(RUTA_ARCHIVOS_VISUALES + "intro.gif");
         JLabel gifLabel = new JLabel(gifIcon);
         ventanaPrincipal.setContentPane(gifLabel);
@@ -283,10 +282,13 @@ public class InterfazGrafica {
         botonAceptar.setBounds(800, 775, 300, 100);
         fondo.add(botonAceptar);
 
+        JuegoPoker.numeroDeJugadores = cantidadDeJugadores.get();
+
         botonAceptar.addActionListener(e -> {
             reproducirSonidoClick();
             for (int i = 0; i < cantidadDeJugadores.get(); i++) {
                 solicitarNombreDeJugador(i + 1);
+
             }
             escogerDineroInicial();
             if (juegoSeleccionado.get() == 1) {
@@ -453,15 +455,13 @@ public class InterfazGrafica {
         botonesAcciones[3].setBounds(350, 650, 200, 200);
         botonesAcciones[4].setBounds(350, 850, 200, 200);
 
-        JTextField dineroEnBote = new JTextField(1);
-        dineroEnBote.setFont(new Font("Noto Sans", Font.BOLD, 40));
-        dineroEnBote.setForeground(Color.WHITE);
-        dineroEnBote.setOpaque(false);
-        dineroEnBote.setBorder(null);
-        dineroEnBote.setHorizontalAlignment(JTextField.CENTER);
-        dineroEnBote.setText("$ 50000");
-        dineroEnBote.setBounds(1025, 212, 200, 200);
-        fondo.add(dineroEnBote);
+        cantidadEnBote.setFont(new Font("Noto Sans", Font.BOLD, 40));
+        cantidadEnBote.setForeground(Color.WHITE);
+        cantidadEnBote.setOpaque(false);
+        cantidadEnBote.setBorder(null);
+        cantidadEnBote.setHorizontalAlignment(JTextField.CENTER);
+        cantidadEnBote.setBounds(1025, 212, 200, 200);
+        fondo.add(cantidadEnBote);
 
         JTextField avisoDeTurno = new JTextField(1);
         JTextField dineroEnMano = new JTextField(1);
@@ -501,6 +501,30 @@ public class InterfazGrafica {
             botonesFicha[i].setRolloverEnabled(true);
             fondo.add(botonesFicha[i]);
         }
+
+        botonesFicha[0].addActionListener(e -> {
+            JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 5);
+        });
+
+        botonesFicha[1].addActionListener(e -> {
+            JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 20);
+        });
+
+        botonesFicha[2].addActionListener(e -> {
+            JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 50);
+        });
+
+        botonesFicha[3].addActionListener(e -> {
+            JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 100);
+        });
+
+        botonesFicha[4].addActionListener(e -> {
+            JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 500);
+        });
+
+        botonesFicha[5].addActionListener(e -> {
+            JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 2000);
+        });
 
         JButton botonInformacion = new JButton("ℹ Informacion");
         JButton botonCombinaciones = new JButton("\uD83C\uDCCF Combinaciones");
