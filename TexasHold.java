@@ -2,14 +2,13 @@ import java.util.ArrayList;
 
 public class TexasHold extends JuegoPoker {
     private ArrayList<Carta> cartasComunitarias;
-    private int bote;
     private int apuestaMinima;
     private int apuestaMaxima;
 
     public TexasHold(){
         super();
         cartasComunitarias = new ArrayList<>();
-        bote = 0;
+        dineroEnBote = 0;
         apuestaMinima = 10;
     }
 
@@ -43,13 +42,12 @@ public class TexasHold extends JuegoPoker {
         return cartasComunitarias;
     }
 
-    public int getBote() {
-        return bote;
+    public int getDineroEnBote() {
+        return dineroEnBote;
     }
 
     @Override
     public void repartirCartas() {
-        // Repartir 2 cartas a cada jugador
         for (Jugador jugador : jugadores) {
             ArrayList<Carta> cartas = mazo.tomarCartas(2);
             jugador.getMano().getMano().clear();
@@ -66,17 +64,57 @@ public class TexasHold extends JuegoPoker {
     public void mostrarMano(){
 
     }
-    @Override
-    public void jugarRonda(){
 
+    public void rondaDeApuestas(){
+
+    }
+
+    @Override
+    public void jugarRonda() {
+        repartirCartas();
+        rondaDeApuestas();
+
+        // Flop
+        if (jugadoresActivos() > 1) {
+            repartirFlop();
+            rondaDeApuestas();
+        }
+
+        // Turn
+        if (jugadoresActivos() > 1) {
+            repartirTurn();
+            rondaDeApuestas();
+        }
+
+        // River
+        if (jugadoresActivos() > 1) {
+            repartirRiver();
+            rondaDeApuestas();
+        }
+
+        // Showdown
+        if (jugadoresActivos() > 1) {
+            determinarGanador();
+        } else {
+            for (Jugador jugador : jugadores) {
+                if (jugador.estaActivo()) {
+                    jugador.setDinero(jugador.getDinero() + dineroEnBote);
+                    break;
+                }
+            }
+        }
+        dineroEnBote = 0;
+        reiniciarApuestas();
     }
     @Override
     public int determinarTurnoInicial(){
-
+        return 0;
     }
     @Override
     public void iniciarJuego(int numJugadores){
 
     }
+
+
 
 }
