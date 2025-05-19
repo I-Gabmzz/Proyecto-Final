@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.*;
+
 public class Carta implements Comparable<Carta> {
     private int valor;
     private String color;
@@ -10,7 +13,7 @@ public class Carta implements Comparable<Carta> {
         this.figura = figura;
     }
 
-    private String generarRuta() {
+    public ImageIcon getImagen() {
         String nombreFigura;
         switch (figura) {
             case "♥":
@@ -42,8 +45,11 @@ public class Carta implements Comparable<Carta> {
         }else{
             nombreValor = String.valueOf(valor);
         }
-        return "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\" + nombreFigura + "\\" + nombreValor + ".png";
-        //return "C:\\Users\\PC OSTRICH\\IdeaProjects\\Proyecto-Final\\" + nombreFigura + "\\" + nombreValor + ".png";
+        String ruta = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\" + nombreFigura + "\\" + nombreValor + ".png";
+        //String ruta = "C:\\Users\\PC OSTRICH\\IdeaProjects\\Proyecto-Final\\" + nombreFigura + "\\" + nombreValor + ".png";
+        ImageIcon icono = new ImageIcon(ruta);
+        Image imagenEscalada = icono.getImage().getScaledInstance(115, 200, Image.SCALE_SMOOTH);
+        return new ImageIcon(imagenEscalada);
     }
 
     public int getValor() {

@@ -27,6 +27,10 @@ public class Jugador {
         return dinero;
     }
 
+    public void setDinero(int dinero) {
+        this.dinero = dinero;
+    }
+
     public boolean estaActivo() {
         return sigueActivo && !yaHizoFold;
     }
@@ -37,5 +41,13 @@ public class Jugador {
 
     public int getApuestaActual() {
         return apuestaActual;
+    }
+
+    public void setApuestaActual(int apuestaActual) {
+        this.apuestaActual = apuestaActual;
+    }
+
+    public void setActivo(boolean activo) {
+        this.sigueActivo = activo;
     }
 }
