@@ -163,16 +163,20 @@ public class Mano implements Comparable<Mano> {
         switch (primeraMano) {
             case 10: return 0; // Escalera real
             case 9:  return compararPorCartaMasAlta(otraMano); // Escalera de color
-            case 8:  //Poker
+            case 8:  return compararPoker(otraMano); //Poker
             case 7:  // Full
+                int c = compararTercia(otraMano);
+                return (c != 0) ? c : compararPar(otraMano);
             case 6:  return compararFlush(otraMano); // Flush
             case 5:  return compararPorCartaMasAlta(otraMano); // Escalera
-            case 4:  // Tercia
-            case 3:  // Dos pares
-            case 2:  // Un par
+            case 4:  return compararTercia(otraMano); // Tercia
+            case 3:  return compararDosPares(otraMano); // Dos pares
+            case 2:  return compararPar(otraMano); // Un par
             case 1:  return compararPorCartaMasAlta(otraMano); // Carta alta
+            default: return 0;
         }
     }
+
 
     private int compararPorCartaMasAlta(Mano otraMano){
         return Integer.compare(this.getValorMayor(), otraMano.getValorMayor());
@@ -201,6 +205,62 @@ public class Mano implements Comparable<Mano> {
         return 0;
     }
 
+    private int compararPoker(Mano otra) {
+        int primerValorPoker = obtenerValoresRepetidos(4).getFirst();
+        int segundoValorPoker = otra.obtenerValoresRepetidos(4).getFirst();
+        int comparacion = Integer.compare(primerValorPoker, segundoValorPoker);
 
+        if (comparacion != 0){
+            return comparacion;
+        }
+        return compararPorCartaMasAlta(otra);
+    }
+
+    private int compararTercia(Mano otra) {
+        int primerValor = obtenerValoresRepetidos(3).getFirst();
+        int segundoValor = otra.obtenerValoresRepetidos(3).getFirst();
+        int comparacion = Integer.compare(primerValor, segundoValor);
+
+        return (comparacion != 0) ? comparacion : compararPorCartaMasAlta(otra);
+    }
+
+    private int compararPar(Mano otra) {
+        int primerValor = obtenerValoresRepetidos(2).getFirst();
+        int segundoValor = otra.obtenerValoresRepetidos(2).getFirst();
+        int comparacion = Integer.compare(primerValor, segundoValor);
+
+        return (comparacion != 0) ? comparacion : compararPorCartaMasAlta(otra);
+    }
+
+    private int compararDosPares(Mano otra) {
+        List<Integer> primeraMano = obtenerValoresRepetidos(2);
+        List<Integer> segundaMano = otra.obtenerValoresRepetidos(2);
+
+        primeraMano.sort(Collections.reverseOrder());
+        segundaMano.sort(Collections.reverseOrder());
+
+        int comparacion = Integer.compare(primeraMano.getFirst(), segundaMano.getFirst());
+        if(comparacion != 0){
+            return comparacion;
+        }
+
+        comparacion = Integer.compare(primeraMano.get(1), segundaMano.get(1));
+        if(comparacion != 0){
+            return comparacion;
+        }
+
+        return compararPorCartaMasAlta(otra);
+    }
+
+    private List<Integer> obtenerValoresRepetidos(int repeticiones) {
+        List<Integer> valores = new ArrayList<>();
+        HashMap<Integer, Integer> frecuencias = obtenerFrecuencias();
+        for (Integer valor : frecuencias.keySet()) {
+            if (frecuencias.get(valor) == repeticiones) {
+                valores.add(valor);
+            }
+        }
+        return valores;
+    }
 
 }
