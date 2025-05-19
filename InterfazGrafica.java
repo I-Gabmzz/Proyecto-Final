@@ -415,7 +415,6 @@ public class InterfazGrafica {
 
     public static void tableroTexas() {
         JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "TableroTexas.png"));
-
         tableroGeneral(fondo);
 
         ventanaPrincipal.setContentPane(fondo);
@@ -437,6 +436,54 @@ public class InterfazGrafica {
 
 
     public static void tableroGeneral(JLabel fondo) {
+
+        JButton[] botonesAcciones = new JButton[5];
+        for (int i = 0; i < 5; i++) {
+            botonesAcciones[i] = new JButton("");
+            botonesAcciones[i].setIcon(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "Boton" + (1+i) + ".png"));
+            botonesAcciones[i].setContentAreaFilled(false);
+            botonesAcciones[i].setFocusPainted(false);
+            botonesAcciones[i].setBorderPainted(false);
+            fondo.add(botonesAcciones[i]);
+        }
+
+        botonesAcciones[0].setBounds(100, 350, 200, 200);
+        botonesAcciones[1].setBounds(100, 600, 200, 200);
+        botonesAcciones[2].setBounds(100, 850, 200, 200);
+        botonesAcciones[3].setBounds(350, 650, 200, 200);
+        botonesAcciones[4].setBounds(350, 850, 200, 200);
+
+        JTextField dineroEnBote = new JTextField(1);
+        dineroEnBote.setFont(new Font("Noto Sans", Font.BOLD, 40));
+        dineroEnBote.setForeground(Color.WHITE);
+        dineroEnBote.setOpaque(false);
+        dineroEnBote.setBorder(null);
+        dineroEnBote.setHorizontalAlignment(JTextField.CENTER);
+        dineroEnBote.setText("$ 50000");
+        dineroEnBote.setBounds(1025, 212, 200, 200);
+        fondo.add(dineroEnBote);
+
+        JTextField avisoDeTurno = new JTextField(1);
+        JTextField dineroEnMano = new JTextField(1);
+        JTextField manoActual = new JTextField(1);
+
+        Stream.of(avisoDeTurno, manoActual, dineroEnMano).forEach(campo -> {
+            campo.setFont(new Font("Noto Sans", Font.BOLD, 40));
+            campo.setBackground(new Color(243, 216, 140));
+            campo.setBorder(null);
+            campo.setHorizontalAlignment(JTextField.CENTER);
+            fondo.add(campo);
+        });
+
+        avisoDeTurno.setText("Es turno de: Gabriel");
+        avisoDeTurno.setBounds(10, 10, 400, 100);
+
+        dineroEnMano.setBounds(1550, 825, 200, 100);
+        dineroEnMano.setText("$ 50000");
+
+        manoActual.setBounds(760, 640, 400, 100);
+        manoActual.setText("Mano de Gabriel");
+
         JButton[] botonesFicha = new JButton[6];
         int delta = 175;
         for (int i = 0; i < 6; i++) {
