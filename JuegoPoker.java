@@ -1,14 +1,15 @@
+import javax.swing.*;
 import java.util.ArrayList;
 
 public abstract class JuegoPoker {
-    protected int numeroDeJugadores;
+    protected static int numeroDeJugadores;
     protected int dineroInicial;
-    protected ArrayList<Jugador> jugadores;
+    protected static int dineroEnBote = 0;
+    protected static ArrayList<Jugador> jugadores;
     protected Mazo mazo;
-    protected int turnoActual;
+    protected static int turnoActual;
 
     public JuegoPoker() {
-        jugadores = new ArrayList<>();
         mazo = new Mazo();
     }
 
@@ -17,7 +18,7 @@ public abstract class JuegoPoker {
     public abstract void mostrarMano();
     public abstract void jugarRonda();
     public abstract int determinarTurnoInicial();
-    public abstract void iniciarJuego(int numJugadores);
+    public abstract void iniciarJuego();
 
     public void mostrarManos(){
         //Mostrar las cartas de manera grafica
@@ -35,12 +36,13 @@ public abstract class JuegoPoker {
         return jugadores;
     }
 
-    public void apostar(Jugador jugador, int cantidad){
+    public static void apostar(Jugador jugador, int cantidad){
         if(jugador.getDinero() >= cantidad){
             jugador.setDinero(jugador.getDinero() - cantidad);
-            //Mostrar la apuesta del jugador de manera grafica
+            dineroEnBote += cantidad;
+            InterfazGrafica.cantidadEnBote.setText(String.valueOf(dineroEnBote));
         } else {
-            //Mostrar un mensaje de que el jugador no tiene fondos suficientes
+            JOptionPane.showMessageDialog(null, "No tienes suficientes fondos para apostar", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
