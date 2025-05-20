@@ -18,11 +18,8 @@ public class FiveCard extends JuegoPoker{
     public void jugarRonda(){
 
     }
-    @Override
-    public int determinarTurnoInicial(){
 
-        return 0;
-    }
+
     @Override
     public void iniciarJuego(){
 

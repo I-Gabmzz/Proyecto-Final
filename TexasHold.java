@@ -1,5 +1,6 @@
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class TexasHold extends JuegoPoker {
     private ArrayList<Carta> cartasComunitarias;
@@ -17,8 +18,8 @@ public class TexasHold extends JuegoPoker {
         TexasHold texasHold = new TexasHold();
         texasHold.iniciarJuego();
     }
-    public void inicializarJugadores() {
 
+    public void inicializarJugadores() {
         numeroDeJugadores = InterfazGrafica.getCantidadDeJugadores();
         dineroInicial = InterfazGrafica.getDineroInicial();
 
@@ -33,7 +34,6 @@ public class TexasHold extends JuegoPoker {
     @Override
     public void iniciarJuego(){
         InterfazGrafica.intro();
-
     }
 
     public void repartirFlop() {
@@ -85,9 +85,12 @@ public class TexasHold extends JuegoPoker {
 
         return 0;
     }
-    @Override
-    public void mostrarMano(){
 
+    @Override
+    public void mostrarMano() {
+        ArrayList<Carta> mano = jugadores.get(turnoActual).getMano().getMano();
+        InterfazGrafica.manoTexas1.setIcon(mano.get(0).getImagen());
+        InterfazGrafica.manoTexas2.setIcon(mano.get(1).getImagen());
     }
 
     public void rondaDeApuestas(){
@@ -130,10 +133,6 @@ public class TexasHold extends JuegoPoker {
         }
         dineroEnBote = 0;
         reiniciarApuestas();
-    }
-    @Override
-    public int determinarTurnoInicial(){
-        return 0;
     }
 
 }
