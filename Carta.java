@@ -33,22 +33,27 @@ public class Carta implements Comparable<Carta> {
                 break;
         }
 
-        String nombreValor;
-        if (valor == 1) {
-            nombreValor = "As";
-        }else if (valor == 11) {
-            nombreValor = "Joto";
-        }else if (valor == 12) {
-            nombreValor = "Queen";
-        }else if (valor == 13){
-            nombreValor = "King";
-        }else{
-            nombreValor = String.valueOf(valor);
-        }
-        String ruta = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\" + nombreFigura + "\\" + nombreValor + ".png";
-        //String ruta = "C:\\Users\\PC OSTRICH\\IdeaProjects\\Proyecto-Final\\" + nombreFigura + "\\" + nombreValor + ".png";
+        String nombreValor = switch(valor) {
+            case 1 -> "As";
+            case 2 -> "Dos";
+            case 3 -> "Tres";
+            case 4 -> "Cuatro";
+            case 5 -> "Cinco";
+            case 6 -> "Seis";
+            case 7 -> "Siete";
+            case 8 -> "Ocho";
+            case 9 -> "Nueve";
+            case 10 -> "Diez";
+            case 11 -> "Joto";
+            case 12 -> "Queen";
+            case 13 -> "King";
+            default -> String.valueOf(valor);
+        };
+
+        //String ruta = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\" + nombreFigura + "\\" + nombreValor + ".png";
+        String ruta = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\Cartas\\" + nombreFigura + "\\" + nombreValor + ".png";
         ImageIcon icono = new ImageIcon(ruta);
-        Image imagenEscalada = icono.getImage().getScaledInstance(115, 200, Image.SCALE_SMOOTH);
+        Image imagenEscalada = icono.getImage().getScaledInstance(250, 350, Image.SCALE_SMOOTH);
         return new ImageIcon(imagenEscalada);
     }
 

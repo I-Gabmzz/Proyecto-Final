@@ -3,11 +3,11 @@ import java.util.ArrayList;
 
 public abstract class JuegoPoker {
     protected static int numeroDeJugadores;
-    protected int dineroInicial;
+    protected static int dineroInicial;
     protected static int dineroEnBote = 0;
     protected static ArrayList<Jugador> jugadores = new ArrayList<>();
     protected Mazo mazo;
-    protected static int turnoActual;
+    protected static int turnoActual = 0;
 
     public JuegoPoker() {
         mazo = new Mazo();
@@ -17,15 +17,22 @@ public abstract class JuegoPoker {
     public abstract int determinarGanador();
     public abstract void mostrarMano();
     public abstract void jugarRonda();
-    public abstract int determinarTurnoInicial();
     public abstract void iniciarJuego();
 
+
+    public static void actualizarTablero() {
+        InterfazGrafica.avisoDeTurno.setText("Es turno de: " + JuegoPoker.jugadores.get(JuegoPoker.turnoActual).getNombre());
+        InterfazGrafica.dineroEnMano.setText("$" + JuegoPoker.jugadores.get(JuegoPoker.turnoActual).getDinero());
+        InterfazGrafica.manoActual.setText("Mano de " + JuegoPoker.jugadores.get(JuegoPoker.turnoActual).getNombre());
+    }
+
     public void mostrarManos(){
-        //Mostrar las cartas de manera grafica
+
     }
 
     public void pasar(){
         turnoActual = (turnoActual + 1) % jugadores.size();
+        InterfazGrafica.avisoDeTurno.setText("Es turno de: " + JuegoPoker.jugadores.get(JuegoPoker.turnoActual).getNombre());
     }
 
     public int getTurnoActual() {
@@ -40,7 +47,8 @@ public abstract class JuegoPoker {
         if(jugador.getDinero() >= cantidad){
             jugador.setDinero(jugador.getDinero() - cantidad);
             dineroEnBote += cantidad;
-            InterfazGrafica.cantidadEnBote.setText(String.valueOf(dineroEnBote));
+            InterfazGrafica.cantidadEnBote.setText("$ " + dineroEnBote);
+            InterfazGrafica.dineroEnMano.setText("$" + jugador.getDinero());
         } else {
             JOptionPane.showMessageDialog(null, "No tienes suficientes fondos para apostar", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -68,8 +76,8 @@ public abstract class JuegoPoker {
         }
     }
 
-    public void fold(Jugador jugador){
+    public static void fold(Jugador jugador){
         jugador.setActivo(false);
-        //Mostrar mensaje con interfaz que el jugador ha hecho fold
+        JOptionPane.showMessageDialog(null, "Has hecho fold, pierdes la ronda", "Fold", JOptionPane.INFORMATION_MESSAGE);
     }
 }
