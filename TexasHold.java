@@ -11,7 +11,6 @@ public class TexasHold extends JuegoPoker {
 
     public TexasHold(){
         super();
-        juegoActual = this;
         cartasComunitarias = new ArrayList<>();
         dineroEnBote = 0;
         apuestaMinima = 10;
@@ -26,9 +25,8 @@ public class TexasHold extends JuegoPoker {
     }
 
     public void inicializarJugadores() {
-        numeroDeJugadores = InterfazGrafica.getCantidadDeJugadores();
-        for (int i = 0; i < numeroDeJugadores; i++) {
-            String nombre = InterfazGrafica.getNombres().get(i);
+        for (int i = 0; i < cantidadDeJugadores; i++) {
+            String nombre = nombres.get(i);
             Jugador player = new Jugador(nombre, dineroInicial);
             jugadores.add(player);
         }
@@ -37,7 +35,7 @@ public class TexasHold extends JuegoPoker {
 
     @Override
     public void iniciarJuego(){
-        InterfazGrafica.intro();
+        //intro();
     }
 
     public void repartirFlop() {
@@ -185,8 +183,8 @@ public class TexasHold extends JuegoPoker {
     @Override
     public void mostrarMano() {
         ArrayList<Carta> mano = jugadores.get(turnoActual).getMano().getMano();
-        InterfazGrafica.manoTexas1.setIcon(mano.get(0).getImagen());
-        InterfazGrafica.manoTexas2.setIcon(mano.get(1).getImagen());
+        manoTexas1.setIcon(mano.get(0).getImagen());
+        manoTexas2.setIcon(mano.get(1).getImagen());
     }
 
     public void mostrarCartasComunitarias() {
@@ -201,11 +199,11 @@ public class TexasHold extends JuegoPoker {
         ImageIcon river5 = new ImageIcon(cartasComunitarias.get(4).getImagen().getImage()
                 .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
 
-        InterfazGrafica.riverTexas1.setIcon(river1);
-        InterfazGrafica.riverTexas2.setIcon(river2);
-        InterfazGrafica.riverTexas3.setIcon(river3);
-        InterfazGrafica.riverTexas4.setIcon(river4);
-        InterfazGrafica.riverTexas5.setIcon(river5);
+        riverTexas1.setIcon(river1);
+        riverTexas2.setIcon(river2);
+        riverTexas3.setIcon(river3);
+        riverTexas4.setIcon(river4);
+        riverTexas5.setIcon(river5);
     }
 
     public void rondaDeApuestas(){
