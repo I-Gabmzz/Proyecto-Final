@@ -93,6 +93,25 @@ public class TexasHold extends JuegoPoker {
         InterfazGrafica.manoTexas2.setIcon(mano.get(1).getImagen());
     }
 
+    public void mostrarCartasComunitarias() {
+        ImageIcon river1 = new ImageIcon(cartasComunitarias.get(0).getImagen().getImage()
+                .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
+        ImageIcon river2 = new ImageIcon(cartasComunitarias.get(1).getImagen().getImage()
+                .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
+        ImageIcon river3 = new ImageIcon(cartasComunitarias.get(2).getImagen().getImage()
+                .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
+        ImageIcon river4 = new ImageIcon(cartasComunitarias.get(3).getImagen().getImage()
+                .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
+        ImageIcon river5 = new ImageIcon(cartasComunitarias.get(4).getImagen().getImage()
+                .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
+
+        InterfazGrafica.riverTexas1.setIcon(river1);
+        InterfazGrafica.riverTexas2.setIcon(river2);
+        InterfazGrafica.riverTexas3.setIcon(river3);
+        InterfazGrafica.riverTexas4.setIcon(river4);
+        InterfazGrafica.riverTexas5.setIcon(river5);
+    }
+
     public void rondaDeApuestas(){
 
     }

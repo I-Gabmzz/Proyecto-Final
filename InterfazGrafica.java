@@ -16,8 +16,10 @@ public class InterfazGrafica {
     public static ArrayList<String> nombres = new ArrayList<>();
     public static AtomicInteger cantidadDeJugadores = new AtomicInteger(2);
     public static AtomicInteger DineroInicial = new AtomicInteger();
-    public static JLabel manoTexas1 = new JLabel();
-    public static JLabel manoTexas2 = new JLabel();
+    public static JLabel manoTexas1 = new JLabel(), manoTexas2 = new JLabel();
+    public static JLabel riverTexas1, riverTexas2, riverTexas3;
+    public static JLabel riverTexas4, riverTexas5;
+
 
 
     static Clip SONIDO_FONDO;
@@ -308,6 +310,7 @@ public class InterfazGrafica {
                 juego.inicializarJugadores();
                 JuegoPoker.actualizarTablero();
                 juego.mostrarMano();
+                juego.mostrarCartasComunitarias();
             } else {
                 tableroFiveDraw();
                 FiveCard juego = new FiveCard();
@@ -452,6 +455,27 @@ public class InterfazGrafica {
         manoTexas2.setBounds(1025, 725, 250, 350);
         fondo.add(manoTexas2);
 
+
+        riverTexas1 = new JLabel();
+        riverTexas1.setBounds(615, 370, 120, 170);
+        fondo.add(riverTexas1);
+
+        riverTexas2 = new JLabel();
+        riverTexas2.setBounds(755, 370, 120, 170);
+        fondo.add(riverTexas2);
+
+        riverTexas3 = new JLabel();
+        riverTexas3.setBounds(895, 370, 120, 170);
+        fondo.add(riverTexas3);
+
+        riverTexas4 = new JLabel();
+        riverTexas4.setBounds(1035, 370, 120, 170);
+        fondo.add(riverTexas4);
+
+        riverTexas5 = new JLabel();
+        riverTexas5.setBounds(1175, 370, 120, 170);
+        fondo.add(riverTexas5);
+
         tableroGeneral(fondo);
 
         ventanaPrincipal.setContentPane(fondo);
@@ -531,26 +555,32 @@ public class InterfazGrafica {
         }
 
         botonesFicha[0].addActionListener(e -> {
+            reproducirSonidoClick();
             JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 5);
         });
 
         botonesFicha[1].addActionListener(e -> {
+            reproducirSonidoClick();
             JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 20);
         });
 
         botonesFicha[2].addActionListener(e -> {
+            reproducirSonidoClick();
             JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 50);
         });
 
         botonesFicha[3].addActionListener(e -> {
+            reproducirSonidoClick();
             JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 100);
         });
 
         botonesFicha[4].addActionListener(e -> {
+            reproducirSonidoClick();
             JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 500);
         });
 
         botonesFicha[5].addActionListener(e -> {
+            reproducirSonidoClick();
             JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), 2000);
         });
 
@@ -595,7 +625,14 @@ public class InterfazGrafica {
             mostrarMenuOpciones();
         });
 
+        botonAllIn.addActionListener(e -> {
+            reproducirSonidoClick();
+            JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual),
+                    JuegoPoker.jugadores.get(JuegoPoker.turnoActual).getDinero());
+        });
+
         botonesAcciones[0].addActionListener(e -> {
+            reproducirSonidoClick();
             String apuestaStr = JOptionPane.showInputDialog(
                     null,
                     "Ingrese la cantidad que desea apostar:",
@@ -617,19 +654,21 @@ public class InterfazGrafica {
         });
 
         botonesAcciones[1].addActionListener(e -> {
+            reproducirSonidoClick();
             // JuegoPoker.igualar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), );
         });
 
         botonesAcciones[2].addActionListener(e -> {
+            reproducirSonidoClick();
             JuegoPoker.fold(JuegoPoker.jugadores.get(JuegoPoker.turnoActual));
         });
 
         botonesAcciones[3].addActionListener(e -> {
-
+            reproducirSonidoClick();
         });
 
         botonesAcciones[4].addActionListener(e -> {
-
+            reproducirSonidoClick();
         });
     }
 
