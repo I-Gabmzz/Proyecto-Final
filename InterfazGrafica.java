@@ -1,4 +1,3 @@
-import javax.lang.model.type.ArrayType;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -11,16 +10,22 @@ import java.util.stream.*;
 public class InterfazGrafica {
     private static JFrame ventanaPrincipal;
     public static JTextField cantidadEnBote = new JTextField(1);
+    public static JTextField dineroEnMano = new JTextField(1);
+    public static JTextField avisoDeTurno = new JTextField(1);
+    public static JTextField manoActual = new JTextField(1);
     public static ArrayList<String> nombres = new ArrayList<>();
     public static AtomicInteger cantidadDeJugadores = new AtomicInteger(2);
     public static AtomicInteger DineroInicial = new AtomicInteger();
+    public static JLabel manoTexas1 = new JLabel();
+    public static JLabel manoTexas2 = new JLabel();
 
 
     static Clip SONIDO_FONDO;
-    //static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\";
-    //static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
-     static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\";
-    static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
+    static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\";
+    static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
+    static String RUTA_ARCHIVOS_CARTAS = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\Cartas\\";
+    //static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\";
+    //static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
 
     public static void intro() {
         ventanaPrincipal = new JFrame("Golden Dynasty");
@@ -223,7 +228,6 @@ public class InterfazGrafica {
     }
 
     public static int solicitarJugadores(AtomicInteger juegoSeleccionado) {
-
         JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "CantidadDeJugadores.png"));
 
         JTextArea numeroDeJugadores = new JTextArea(cantidadDeJugadores + " Jugadores");
@@ -302,9 +306,13 @@ public class InterfazGrafica {
                 tableroTexas();
                 TexasHold juego = new TexasHold();
                 juego.inicializarJugadores();
+                JuegoPoker.actualizarTablero();
+                juego.mostrarMano();
             } else {
                 tableroFiveDraw();
-
+                FiveCard juego = new FiveCard();
+                //juego.inicializarJugadores();
+                JuegoPoker.actualizarTablero();
             }
         });
 
@@ -429,7 +437,6 @@ public class InterfazGrafica {
         panelPrincipal.add(panelBotones, BorderLayout.CENTER);
         ventanaDinero.add(panelPrincipal);
         ventanaDinero.setVisible(true);
-        //return DineroInicial.get();
     }
 
     public static int getDineroInicial() {
@@ -438,6 +445,13 @@ public class InterfazGrafica {
 
     public static void tableroTexas() {
         JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "TableroTexas.png"));
+
+        manoTexas1.setBounds(650, 725, 250, 350);
+        fondo.add(manoTexas1);
+
+        manoTexas2.setBounds(1025, 725, 250, 350);
+        fondo.add(manoTexas2);
+
         tableroGeneral(fondo);
 
         ventanaPrincipal.setContentPane(fondo);
@@ -459,7 +473,6 @@ public class InterfazGrafica {
 
 
     public static void tableroGeneral(JLabel fondo) {
-
         JButton[] botonesAcciones = new JButton[5];
         for (int i = 0; i < 5; i++) {
             botonesAcciones[i] = new JButton("");
@@ -484,26 +497,20 @@ public class InterfazGrafica {
         cantidadEnBote.setBounds(1025, 212, 200, 200);
         fondo.add(cantidadEnBote);
 
-        JTextField avisoDeTurno = new JTextField(1);
-        JTextField dineroEnMano = new JTextField(1);
-        JTextField manoActual = new JTextField(1);
-
         Stream.of(avisoDeTurno, manoActual, dineroEnMano).forEach(campo -> {
             campo.setFont(new Font("Noto Sans", Font.BOLD, 40));
             campo.setBackground(new Color(243, 216, 140));
             campo.setBorder(null);
+            campo.setEditable(false);
             campo.setHorizontalAlignment(JTextField.CENTER);
             fondo.add(campo);
         });
 
-        avisoDeTurno.setText("Es turno de: Gabriel");
         avisoDeTurno.setBounds(10, 10, 400, 100);
 
         dineroEnMano.setBounds(1550, 825, 200, 100);
-        dineroEnMano.setText("$ 50000");
 
         manoActual.setBounds(760, 640, 400, 100);
-        manoActual.setText("Mano de Gabriel");
 
         JButton[] botonesFicha = new JButton[6];
         int delta = 175;
@@ -587,7 +594,45 @@ public class InterfazGrafica {
             reproducirSonidoClick();
             mostrarMenuOpciones();
         });
+
+        botonesAcciones[0].addActionListener(e -> {
+            String apuestaStr = JOptionPane.showInputDialog(
+                    null,
+                    "Ingrese la cantidad que desea apostar:",
+                    "Subir apuesta",
+                    JOptionPane.QUESTION_MESSAGE
+            );
+
+            if (apuestaStr != null && !apuestaStr.trim().isEmpty() && apuestaStr.matches("\\d+")) {
+                int cantidad = Integer.parseInt(apuestaStr);
+                JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), cantidad);
+            } else if (apuestaStr != null) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Por favor ingrese un número válido (sin decimales o caracteres)",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        });
+
+        botonesAcciones[1].addActionListener(e -> {
+            // JuegoPoker.igualar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), );
+        });
+
+        botonesAcciones[2].addActionListener(e -> {
+            JuegoPoker.fold(JuegoPoker.jugadores.get(JuegoPoker.turnoActual));
+        });
+
+        botonesAcciones[3].addActionListener(e -> {
+
+        });
+
+        botonesAcciones[4].addActionListener(e -> {
+
+        });
     }
+
     public static void mostrarInformacion(int juegoSeleccionado) {
         JDialog informacionVentana = new JDialog();
         informacionVentana.setSize(800, 500);
