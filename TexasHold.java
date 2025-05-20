@@ -14,12 +14,26 @@ public class TexasHold extends JuegoPoker {
     }
 
     public static void main(String[] args) {
-        new TexasHold().iniciarJuego();
+        TexasHold texasHold = new TexasHold();
+        texasHold.iniciarJuego();
+    }
+    public void inicializarJugadores() {
+
+        numeroDeJugadores = InterfazGrafica.getCantidadDeJugadores();
+        dineroInicial = InterfazGrafica.getDineroInicial();
+
+        for (int i = 0; i < numeroDeJugadores; i++) {
+            String nombre = InterfazGrafica.getNombres().get(i);
+            Jugador player = new Jugador(nombre, dineroInicial);
+            jugadores.add(player);
+        }
+        jugarRonda();
     }
 
     @Override
     public void iniciarJuego(){
         InterfazGrafica.intro();
+
     }
 
     public void repartirFlop() {
