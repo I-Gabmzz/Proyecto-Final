@@ -12,8 +12,10 @@ public abstract class JuegoPoker {
     static Clip SONIDO_FONDO;
     static String RUTA_ARCHIVOS_VISUALES = "RecursosVisuales\\";
     static String RUTA_ARCHIVOS_FICHAS = "RecursosVisuales\\Fichas\\";
+    protected static TexasHold juegoTexas;
+    protected static FiveCard juegoFive;
 
-
+    protected static int apuestaActual = 0;
     protected static int cantidadDeJugadores = 2;
     protected static int dineroEnBote;
     protected static int turnoActual;
@@ -266,16 +268,13 @@ public abstract class JuegoPoker {
 
             if (modoDeJuego == 1) {
                 tableroTexas();
-                TexasHold juego = new TexasHold();
-                juego.inicializarJugadores();
+                juegoTexas = new TexasHold();
+                juegoTexas.inicializarJugadores();
                 actualizarTablero();
-                juego.repartirCartas();
-                juego.mostrarMano();
-                juego.mostrarCartasComunitarias();
-                juego.jugarRonda();
+                juegoTexas.jugarRonda();
             } else {
                 tableroFiveDraw();
-                FiveCard juego = new FiveCard();
+                juegoFive = new FiveCard();
                 actualizarTablero();
             }
         });
@@ -526,48 +525,44 @@ public abstract class JuegoPoker {
                     jugadores.get(turnoActual).getDinero());
         });
 
-        botonesAcciones[0].addActionListener(e -> { // Botón Apostar/Subir
+        botonesAcciones[0].addActionListener(e -> { // Subir
             reproducirSonidoClick();
             String apuestaStr = JOptionPane.showInputDialog(
                     null,
-                    "Ingrese la cantidad que desea apostar:",
+                    "Ingrese la cantidad a subir:",
                     "Subir apuesta",
                     JOptionPane.QUESTION_MESSAGE
             );
-
-            if (apuestaStr != null && !apuestaStr.trim().isEmpty() && apuestaStr.matches("\\d+")) {
+            if (apuestaStr != null && !apuestaStr.trim().isEmpty()) {
                 int cantidad = Integer.parseInt(apuestaStr);
-                //manejarAccionJugador("APOSTAR", cantidad);
+                subir(jugadores.get(turnoActual), cantidad,apuestaActual);
+                juegoTexas.avanzarTurno();
             }
         });
 
-        botonesAcciones[1].addActionListener(e -> { // Botón Igualar
+        botonesAcciones[1].addActionListener(e -> { // Igualar
             reproducirSonidoClick();
-            //manejarAccionJugador("IGUALAR", 0);
+            igualar(jugadores.get(turnoActual), apuestaActual);
+            juegoTexas.avanzarTurno();
         });
 
-        botonesAcciones[2].addActionListener(e -> { // Botón Fold
+        botonesAcciones[2].addActionListener(e -> { // Fold
             reproducirSonidoClick();
-           // manejarAccionJugador("FOLD", 0);
+            fold(jugadores.get(turnoActual));
+            juegoTexas.avanzarTurno();
         });
 
-        botonesAcciones[3].addActionListener(e -> { // Botón Pasar
+        botonesAcciones[3].addActionListener(e -> { // Pasar
             reproducirSonidoClick();
-
-            //manejarAccionJugador("PASAR", 0);
-        });
-
-        botonesAcciones[4].addActionListener(e -> { // Botón All-in
-            reproducirSonidoClick();
-            Jugador jugador =jugadores.get(turnoActual);
-           // manejarAccionJugador("APOSTAR", jugador.getDinero());
+            pasar();
         });
     }
 
     public static void actualizarTablero() {
-        avisoDeTurno.setText("Es turno de: " + JuegoPoker.jugadores.get(JuegoPoker.turnoActual).getNombre());
-        dineroEnMano.setText("$" + JuegoPoker.jugadores.get(JuegoPoker.turnoActual).getDinero());
-        manoActual.setText("Mano de " + JuegoPoker.jugadores.get(JuegoPoker.turnoActual).getNombre());
+        avisoDeTurno.setText("Es turno de: " + jugadores.get(turnoActual).getNombre());
+        dineroEnMano.setText("$" + jugadores.get(turnoActual).getDinero());
+        cantidadEnBote.setText("$" + dineroEnBote);
+        manoActual.setText("Mano de " + jugadores.get(turnoActual).getNombre());
     }
 
 
@@ -633,6 +628,10 @@ public abstract class JuegoPoker {
     public static void pasar(){
         turnoActual = (turnoActual + 1) % jugadores.size();
         avisoDeTurno.setText("Es turno de: " + JuegoPoker.jugadores.get(JuegoPoker.turnoActual).getNombre());
+    }
+    public static int cambiarTurno(){
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        return turnoActual;
     }
 
     public static void igualar(Jugador jugador, int apuestaMaxima){

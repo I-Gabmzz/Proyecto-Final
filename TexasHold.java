@@ -8,6 +8,11 @@ public class TexasHold extends JuegoPoker {
     private ArrayList<Carta> cartasComunitarias;
     private int apuestaMinima;
     private int apuestaMaxima;
+    private int etapaActual = 0;
+    public enum EstadoJuego {
+        PREFLOP, FLOP, TURN, RIVER, SHOWDOWN
+    }
+    private EstadoJuego estadoJuego;
 
     public TexasHold(){
         super();
@@ -16,26 +21,17 @@ public class TexasHold extends JuegoPoker {
         apuestaMinima = 10;
     }
 
-    public static void main(String[] args) {
-        TexasHold texasHold = new TexasHold();
-        texasHold.iniciarJuego();
-        texasHold.repartirCartas();
-        texasHold.mostrarMano();
-        texasHold.mostrarCartasComunitarias();
-    }
-
     public void inicializarJugadores() {
         for (int i = 0; i < cantidadDeJugadores; i++) {
             String nombre = nombres.get(i);
             Jugador player = new Jugador(nombre, dineroInicial);
             jugadores.add(player);
         }
-        jugarRonda();
     }
 
     @Override
     public void iniciarJuego(){
-        //intro();
+
     }
 
     public void repartirFlop() {
@@ -154,31 +150,6 @@ public class TexasHold extends JuegoPoker {
         }
     }
 
-    public void manejarAccionJugador(String accion, int cantidad) {
-        Jugador jugadorActual = jugadores.get(turnoActual);
-
-        switch(accion) {
-            case "PASAR":
-                pasar();
-                break;
-            case "APOSTAR":
-                apostar(jugadorActual, cantidad);
-                break;
-            case "IGUALAR":
-                igualar(jugadorActual, apuestaMaxima);
-                break;
-            case "SUBIR":
-                subir(jugadorActual, cantidad, apuestaMaxima);
-                break;
-            case "FOLD":
-                fold(jugadorActual);
-                break;
-        }
-        turnoActual = (turnoActual + 1) % jugadores.size();
-        actualizarTablero();
-    }
-
-
 
     @Override
     public void mostrarMano() {
@@ -188,64 +159,151 @@ public class TexasHold extends JuegoPoker {
     }
 
     public void mostrarCartasComunitarias() {
-        ImageIcon river1 = new ImageIcon(cartasComunitarias.get(0).getImagen().getImage()
-                .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
-        ImageIcon river2 = new ImageIcon(cartasComunitarias.get(1).getImagen().getImage()
-                .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
-        ImageIcon river3 = new ImageIcon(cartasComunitarias.get(2).getImagen().getImage()
-                .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
-        ImageIcon river4 = new ImageIcon(cartasComunitarias.get(3).getImagen().getImage()
-                .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
-        ImageIcon river5 = new ImageIcon(cartasComunitarias.get(4).getImagen().getImage()
-                .getScaledInstance(120, 170, Image.SCALE_SMOOTH));
-
-        riverTexas1.setIcon(river1);
-        riverTexas2.setIcon(river2);
-        riverTexas3.setIcon(river3);
-        riverTexas4.setIcon(river4);
-        riverTexas5.setIcon(river5);
+        ImageIcon cartaVolteada = new ImageIcon(RUTA_ARCHIVOS_VISUALES + "Cubierta Carta.png");
+        Image imagenVolteadaEscalada = cartaVolteada.getImage().getScaledInstance(120, 170, Image.SCALE_SMOOTH);
+        ImageIcon iconoVolteado = new ImageIcon(imagenVolteadaEscalada);
+        switch (etapaActual) {
+            case 0:
+                riverTexas1.setIcon(iconoVolteado);
+                riverTexas2.setIcon(iconoVolteado);
+                riverTexas3.setIcon(iconoVolteado);
+                riverTexas4.setIcon(iconoVolteado);
+                riverTexas5.setIcon(iconoVolteado);
+                break;
+            case 1:
+                riverTexas1.setIcon(escalarCarta(cartasComunitarias.get(0)));
+                riverTexas2.setIcon(escalarCarta(cartasComunitarias.get(1)));
+                riverTexas3.setIcon(escalarCarta(cartasComunitarias.get(2)));
+                riverTexas4.setIcon(iconoVolteado);
+                riverTexas5.setIcon(iconoVolteado);
+                break;
+            case 2:
+                riverTexas1.setIcon(escalarCarta(cartasComunitarias.get(0)));
+                riverTexas2.setIcon(escalarCarta(cartasComunitarias.get(1)));
+                riverTexas3.setIcon(escalarCarta(cartasComunitarias.get(2)));
+                riverTexas4.setIcon(escalarCarta(cartasComunitarias.get(3)));
+                riverTexas5.setIcon(iconoVolteado);
+                break;
+            case 3:
+                riverTexas1.setIcon(escalarCarta(cartasComunitarias.get(0)));
+                riverTexas2.setIcon(escalarCarta(cartasComunitarias.get(1)));
+                riverTexas3.setIcon(escalarCarta(cartasComunitarias.get(2)));
+                riverTexas4.setIcon(escalarCarta(cartasComunitarias.get(3)));
+                riverTexas5.setIcon(escalarCarta(cartasComunitarias.get(4)));
+                break;
+        }
     }
 
-    public void rondaDeApuestas(){
+    public static ImageIcon escalarCarta(Carta carta) {
+        Image imagenOriginal = carta.getImagen().getImage();
+        Image imagenEscalada = imagenOriginal.getScaledInstance(120, 170, Image.SCALE_SMOOTH);
+        return new ImageIcon(imagenEscalada);
+    }
+
+    public void primeraRondaDeApuestas(){
+        Jugador jugador = jugadores.get(turnoActual);
+        apostar(jugador,apuestaMinima);
+        turnoActual = cambiarTurno();
+        actualizarTablero();
+        jugador = jugadores.get(turnoActual);
+        int segundaApuesta = apuestaMinima * 2;
+        apostar(jugador,segundaApuesta);
+        turnoActual = cambiarTurno();
+        jugador = jugadores.get(turnoActual);
 
     }
 
     @Override
     public void jugarRonda() {
+        estadoJuego = EstadoJuego.PREFLOP;
         repartirCartas();
-        rondaDeApuestas();
+        mostrarMano();
+        iniciarRondaDeApuestas(); // Espera interacción del usuario
+    }
 
-        // Flop
-        if (jugadoresActivos() > 1) {
-            repartirFlop();
-            rondaDeApuestas();
+    private void iniciarRondaDeApuestas() {
+        reiniciarApuestas();
+        apuestaActual = 0;
+        turnoActual = 0;
+        JuegoPoker.actualizarTablero();
+        // Los botones ahora manejan el flujo
+    }
+
+    private void avanzarEtapa() {
+        switch (estadoJuego) {
+            case PREFLOP:
+                estadoJuego = EstadoJuego.FLOP;
+                repartirFlop();
+                mostrarCartasComunitarias();
+                iniciarRondaDeApuestas();
+                break;
+            case FLOP:
+                estadoJuego = EstadoJuego.TURN;
+                repartirTurn();
+                mostrarCartasComunitarias();
+                iniciarRondaDeApuestas();
+                break;
+            case TURN:
+                estadoJuego = EstadoJuego.RIVER;
+                repartirRiver();
+                mostrarCartasComunitarias();
+                iniciarRondaDeApuestas();
+                break;
+            case RIVER:
+                estadoJuego = EstadoJuego.SHOWDOWN;
+                determinarGanador();
+                break;
         }
+    }
 
-        // Turn
-        if (jugadoresActivos() > 1) {
-            repartirTurn();
-            rondaDeApuestas();
+    public void subir(Jugador jugador, int cantidad) {
+        int total = apuestaActual + cantidad;
+        if (jugador.getDinero() >= total) {
+            jugador.setDinero(jugador.getDinero() - total);
+            jugador.setApuestaActual(total);
+            apuestaActual = total;
+            dineroEnBote += total;
+            JuegoPoker.actualizarTablero(); // Actualizar la interfaz
         }
+    }
 
-        // River
-        if (jugadoresActivos() > 1) {
-            repartirRiver();
-            rondaDeApuestas();
+    public static void igualar(Jugador jugador, int apuestaMaxima) {
+        int cantidad = apuestaMaxima - jugador.getApuestaActual();
+        if (jugador.getDinero() >= cantidad) {
+            jugador.setDinero(jugador.getDinero() - cantidad);
+            jugador.setApuestaActual(apuestaMaxima);
+            dineroEnBote += cantidad;
+            JuegoPoker.actualizarTablero();
         }
+    }
 
-        // Showdown
-        if (jugadoresActivos() > 1) {
-            determinarGanador();
-        } else {
-            for (Jugador jugador : jugadores) {
-                if (jugador.estaActivo()) {
-                    jugador.setDinero(jugador.getDinero() + dineroEnBote);
-                    break;
-                }
+    public static void fold(Jugador jugador) {
+        jugador.setActivo(false);
+        JOptionPane.showMessageDialog(null, jugador.getNombre() + " ha hecho fold.");
+    }
+
+    public static void pasar() {
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        JuegoPoker.actualizarTablero();
+    }
+
+    public void avanzarTurno() {
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        JuegoPoker.actualizarTablero();
+
+        // Si todos han apostado, avanzar etapa (Flop, Turn, River, etc.)
+        if (todosHanApostado()) {
+            avanzarEtapa();
+        }
+    }
+
+    private boolean todosHanApostado() {
+        for (Jugador jugador : jugadores) {
+            if (jugador.estaActivo() && jugador.getApuestaActual() < apuestaActual) {
+                return false;
             }
         }
-        dineroEnBote = 0;
-        reiniciarApuestas();
+        return true;
     }
 
 }
