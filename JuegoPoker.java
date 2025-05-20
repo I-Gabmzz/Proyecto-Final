@@ -5,7 +5,7 @@ public abstract class JuegoPoker {
     protected static int numeroDeJugadores;
     protected int dineroInicial;
     protected static int dineroEnBote = 0;
-    protected static ArrayList<Jugador> jugadores;
+    protected static ArrayList<Jugador> jugadores = new ArrayList<>();
     protected Mazo mazo;
     protected static int turnoActual;
 

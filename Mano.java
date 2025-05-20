@@ -3,10 +3,13 @@ import java.util.*;
 public class Mano implements Comparable<Mano> {
     private ArrayList<Carta> mano;
 
-    public Mano(ArrayList<Carta> cartas) {
-        this.mano = new ArrayList<>(cartas);
+    public Mano() {
+        this.mano = new ArrayList<>();
     }
 
+    public void setMano(ArrayList<Carta> mano) {
+        this.mano = mano;
+    }
     public ArrayList<Carta> getMano(){
         return mano;
     }

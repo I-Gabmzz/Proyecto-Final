@@ -1,7 +1,9 @@
+import javax.lang.model.type.ArrayType;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.*;
@@ -9,13 +11,16 @@ import java.util.stream.*;
 public class InterfazGrafica {
     private static JFrame ventanaPrincipal;
     public static JTextField cantidadEnBote = new JTextField(1);
+    public static ArrayList<String> nombres = new ArrayList<>();
+    public static AtomicInteger cantidadDeJugadores = new AtomicInteger(2);
+    public static AtomicInteger DineroInicial = new AtomicInteger();
 
 
     static Clip SONIDO_FONDO;
-    static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\";
-    static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
-    // static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\";
-    // static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
+    //static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\";
+    //static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
+     static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\";
+    static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
 
     public static void intro() {
         ventanaPrincipal = new JFrame("Golden Dynasty");
@@ -218,7 +223,6 @@ public class InterfazGrafica {
     }
 
     public static int solicitarJugadores(AtomicInteger juegoSeleccionado) {
-        AtomicInteger cantidadDeJugadores = new AtomicInteger(2);
 
         JLabel fondo = new JLabel(new ImageIcon(RUTA_ARCHIVOS_VISUALES + "CantidadDeJugadores.png"));
 
@@ -286,15 +290,21 @@ public class InterfazGrafica {
 
         botonAceptar.addActionListener(e -> {
             reproducirSonidoClick();
-            for (int i = 0; i < cantidadDeJugadores.get(); i++) {
-                solicitarNombreDeJugador(i + 1);
 
+            nombres.clear();
+            for (int i = 0; i < cantidadDeJugadores.get(); i++) {
+                String nombre = solicitarNombreDeJugador(i + 1);
+                nombres.add(nombre);
             }
             escogerDineroInicial();
+
             if (juegoSeleccionado.get() == 1) {
                 tableroTexas();
+                TexasHold juego = new TexasHold();
+                juego.inicializarJugadores();
             } else {
                 tableroFiveDraw();
+
             }
         });
 
@@ -303,6 +313,14 @@ public class InterfazGrafica {
         ventanaPrincipal.repaint();
         ventanaPrincipal.setVisible(true);
         return cantidadDeJugadores.get();
+    }
+
+    public static int getCantidadDeJugadores() {
+        return cantidadDeJugadores.get();
+    }
+
+    public static ArrayList<String>getNombres(){
+        return nombres;
     }
 
     public static String solicitarNombreDeJugador(int numDeJugador) {
@@ -358,8 +376,7 @@ public class InterfazGrafica {
         return nombre.get();
     }
 
-    public static int escogerDineroInicial() {
-        AtomicInteger DineroInicial = new AtomicInteger();
+    public static void escogerDineroInicial() {
 
         JDialog ventanaDinero = new JDialog();
         ventanaDinero.setSize(1200, 300);
@@ -412,6 +429,10 @@ public class InterfazGrafica {
         panelPrincipal.add(panelBotones, BorderLayout.CENTER);
         ventanaDinero.add(panelPrincipal);
         ventanaDinero.setVisible(true);
+        //return DineroInicial.get();
+    }
+
+    public static int getDineroInicial() {
         return DineroInicial.get();
     }
 
