@@ -23,11 +23,11 @@ public class InterfazGrafica {
 
 
     static Clip SONIDO_FONDO;
-    static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\";
-    static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
-    static String RUTA_ARCHIVOS_CARTAS = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\Cartas\\";
-    //static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\";
-    //static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
+    //static String RUTA_ARCHIVOS_VISUALES = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\";
+    //static String RUTA_ARCHIVOS_FICHAS = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\RecursosVisuales\\Fichas\\";
+    //static String RUTA_ARCHIVOS_CARTAS = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\Cartas\\";
+    static String RUTA_ARCHIVOS_VISUALES = "RecursosVisuales\\";
+    static String RUTA_ARCHIVOS_FICHAS = "RecursosVisuales\\Fichas\\";
 
     public static void intro() {
         ventanaPrincipal = new JFrame("Golden Dynasty");
@@ -631,7 +631,7 @@ public class InterfazGrafica {
                     JuegoPoker.jugadores.get(JuegoPoker.turnoActual).getDinero());
         });
 
-        botonesAcciones[0].addActionListener(e -> {
+        botonesAcciones[0].addActionListener(e -> { // Botón Apostar/Subir
             reproducirSonidoClick();
             String apuestaStr = JOptionPane.showInputDialog(
                     null,
@@ -642,33 +642,34 @@ public class InterfazGrafica {
 
             if (apuestaStr != null && !apuestaStr.trim().isEmpty() && apuestaStr.matches("\\d+")) {
                 int cantidad = Integer.parseInt(apuestaStr);
-                JuegoPoker.apostar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), cantidad);
-            } else if (apuestaStr != null) {
-                JOptionPane.showMessageDialog(
-                        null,
-                        "Por favor ingrese un número válido (sin decimales o caracteres)",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                TexasHold juego = (TexasHold) JuegoPoker.juegoActual;
+                juego.manejarAccionJugador("APOSTAR", cantidad);
             }
         });
 
-        botonesAcciones[1].addActionListener(e -> {
+        botonesAcciones[1].addActionListener(e -> { // Botón Igualar
             reproducirSonidoClick();
-            // JuegoPoker.igualar(JuegoPoker.jugadores.get(JuegoPoker.turnoActual), );
+            TexasHold juego = (TexasHold) JuegoPoker.juegoActual;
+            juego.manejarAccionJugador("IGUALAR", 0);
         });
 
-        botonesAcciones[2].addActionListener(e -> {
+        botonesAcciones[2].addActionListener(e -> { // Botón Fold
             reproducirSonidoClick();
-            JuegoPoker.fold(JuegoPoker.jugadores.get(JuegoPoker.turnoActual));
+            TexasHold juego = (TexasHold) JuegoPoker.juegoActual;
+            juego.manejarAccionJugador("FOLD", 0);
         });
 
-        botonesAcciones[3].addActionListener(e -> {
+        botonesAcciones[3].addActionListener(e -> { // Botón Pasar
             reproducirSonidoClick();
+            TexasHold juego = (TexasHold) JuegoPoker.juegoActual;
+            juego.manejarAccionJugador("PASAR", 0);
         });
 
-        botonesAcciones[4].addActionListener(e -> {
+        botonesAcciones[4].addActionListener(e -> { // Botón All-in
             reproducirSonidoClick();
+            TexasHold juego = (TexasHold) JuegoPoker.juegoActual;
+            Jugador jugador = JuegoPoker.jugadores.get(JuegoPoker.turnoActual);
+            juego.manejarAccionJugador("APOSTAR", jugador.getDinero());
         });
     }
 
