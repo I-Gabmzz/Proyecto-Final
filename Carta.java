@@ -50,8 +50,8 @@ public class Carta implements Comparable<Carta> {
             default -> String.valueOf(valor);
         };
 
-        //String ruta = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\" + nombreFigura + "\\" + nombreValor + ".png";
-        String ruta = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\Cartas\\" + nombreFigura + "\\" + nombreValor + ".png";
+        String ruta = "C:\\Users\\14321\\IdeaProjects\\Proyecto-Final\\Cartas\\" + nombreFigura + "\\" + nombreValor + ".png";
+        //String ruta = "C:\\Users\\PC OSTRICH\\Proyecto-Final\\Cartas\\" + nombreFigura + "\\" + nombreValor + ".png";
         ImageIcon icono = new ImageIcon(ruta);
         Image imagenEscalada = icono.getImage().getScaledInstance(250, 350, Image.SCALE_SMOOTH);
         return new ImageIcon(imagenEscalada);

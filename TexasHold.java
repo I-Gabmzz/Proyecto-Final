@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class TexasHold extends JuegoPoker {
     private ArrayList<Carta> cartasComunitarias;
@@ -9,6 +11,7 @@ public class TexasHold extends JuegoPoker {
 
     public TexasHold(){
         super();
+        juegoActual = this;
         cartasComunitarias = new ArrayList<>();
         dineroEnBote = 0;
         apuestaMinima = 10;
@@ -17,12 +20,13 @@ public class TexasHold extends JuegoPoker {
     public static void main(String[] args) {
         TexasHold texasHold = new TexasHold();
         texasHold.iniciarJuego();
+        texasHold.repartirCartas();
+        texasHold.mostrarMano();
+        texasHold.mostrarCartasComunitarias();
     }
 
     public void inicializarJugadores() {
         numeroDeJugadores = InterfazGrafica.getCantidadDeJugadores();
-        dineroInicial = InterfazGrafica.getDineroInicial();
-
         for (int i = 0; i < numeroDeJugadores; i++) {
             String nombre = InterfazGrafica.getNombres().get(i);
             Jugador player = new Jugador(nombre, dineroInicial);
@@ -81,10 +85,102 @@ public class TexasHold extends JuegoPoker {
     }
 
     @Override
-    public int determinarGanador(){
+    public int determinarGanador() {
+        ArrayList<Jugador> jugadoresActivos = new ArrayList<>(
+                jugadores.stream()
+                        .filter(Jugador::estaActivo)
+                        .collect(Collectors.toList())
+        );
 
-        return 0;
+        if (jugadoresActivos.size() == 1) {
+            Jugador ganador = jugadoresActivos.get(0);
+            ganador.setDinero(ganador.getDinero() + dineroEnBote);
+            return jugadores.indexOf(ganador);
+        }
+
+        ArrayList<Mano> mejoresManos = new ArrayList<>();
+        for (Jugador jugador : jugadoresActivos) {
+            Mano mejorMano = encontrarMejorMano(jugador);
+            mejoresManos.add(mejorMano);
+        }
+
+        Mano mejorManoGlobal = Collections.max(mejoresManos);
+
+        ArrayList<Integer> indicesGanadores = new ArrayList<>();
+        for (int i = 0; i < mejoresManos.size(); i++) {
+            if (mejoresManos.get(i).compareTo(mejorManoGlobal) == 0) {
+                Jugador jugadorGanador = jugadoresActivos.get(i);
+                indicesGanadores.add(jugadores.indexOf(jugadorGanador));
+            }
+        }
+
+        int gananciaPorJugador = dineroEnBote / indicesGanadores.size();
+        for (int indice : indicesGanadores) {
+            Jugador jugador = jugadores.get(indice);
+            jugador.setDinero(jugador.getDinero() + gananciaPorJugador);
+        }
+
+        dineroEnBote = 0;
+        return indicesGanadores.get(0);
     }
+
+    private Mano encontrarMejorMano(Jugador jugador) {
+        ArrayList<Carta> todasLasCartas = new ArrayList<>();
+        todasLasCartas.addAll(jugador.getMano().getMano());
+        todasLasCartas.addAll(cartasComunitarias);
+
+        ArrayList<Mano> combinaciones = generarCombinaciones(todasLasCartas);
+        return Collections.max(combinaciones);
+    }
+
+    private ArrayList<Mano> generarCombinaciones(ArrayList<Carta> cartas) {
+        ArrayList<Mano> combinaciones = new ArrayList<>();
+        combinar(cartas, 0, new ArrayList<>(), combinaciones);
+        return combinaciones;
+    }
+
+    private void combinar(ArrayList<Carta> cartas, int inicio, ArrayList<Carta> actual, ArrayList<Mano> resultado) {
+        if (actual.size() == 5) {
+            Mano mano = new Mano();
+            for (Carta carta : actual) {
+                mano.agregarCarta(carta);
+            }
+            resultado.add(mano);
+            return;
+        }
+
+        for (int i = inicio; i < cartas.size(); i++) {
+            actual.add(cartas.get(i));
+            combinar(cartas, i + 1, actual, resultado);
+            actual.remove(actual.size() - 1);
+        }
+    }
+
+    public void manejarAccionJugador(String accion, int cantidad) {
+        Jugador jugadorActual = jugadores.get(turnoActual);
+
+        switch(accion) {
+            case "PASAR":
+                pasar();
+                break;
+            case "APOSTAR":
+                apostar(jugadorActual, cantidad);
+                break;
+            case "IGUALAR":
+                igualar(jugadorActual, apuestaMaxima);
+                break;
+            case "SUBIR":
+                subir(jugadorActual, cantidad, apuestaMaxima);
+                break;
+            case "FOLD":
+                fold(jugadorActual);
+                break;
+        }
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        actualizarTablero();
+    }
+
+
 
     @Override
     public void mostrarMano() {
